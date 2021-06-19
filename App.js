@@ -1,10 +1,23 @@
-const { Logger, KEVY_JUST_WENT_HOME } = require("./logger");
+const http = require("http");
+const { VERSION } = require("lodash");
 
-const logger = new Logger();
+console.log(VERSION);
 
-// Register a listerner
-logger.on(KEVY_JUST_WENT_HOME, ({ date }) => {
-	console.log(date.toISOString() + " Yeaaaahh!!!");
+const server = http.createServer((req, res) => {
+	if (req.url === "/") {
+		res.write("Hellow.. sir..");
+	}
+	if (req.url === "/api/courses") {
+		res.write(JSON.stringify([1, 2, 3]));
+	}
+	if (req.url === "/lareine") {
+		res.write(
+			"<a href='https://www.google.com/search?client=firefox-b-d&q=dineo+moeketsi'>Dineo Moeketsi</a>"
+		);
+	}
+	res.end();
 });
 
-logger.log("Day after day... Seems like I push against the clouds");
+server.listen(3000);
+
+console.log("Listening on port 3000...");
