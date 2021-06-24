@@ -1,16 +1,14 @@
 const express = require("express");
 const Joi = require("joi");
+const logger = require("./logger");
+const authenticate = require("./authenticator");
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
-
-app.use((req, res, next) => {
-	console.log("Authenticating...");
-	// Nothing will be executed unless next() is called
-	next();
-});
+app.use(logger);
+app.use(authenticate);
 
 const courses = [
 	{ id: 1, value: "Data Mining" },
