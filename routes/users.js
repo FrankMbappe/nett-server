@@ -2,7 +2,7 @@ const express = require("express"); // Server
 const Joi = require("joi"); // Input validation
 
 const router = express.Router(); // Instead of creating a new server
-const users = require("../datatest"); // Data
+const users = require("../data"); // Data
 
 /* Input validation function */
 function validateUser(user) {
@@ -12,10 +12,10 @@ function validateUser(user) {
 
 //
 // GET
-router.get("/api/users/", (_, res) => {
+router.get("/", (_, res) => {
 	res.send(users);
 });
-router.get("/api/users/:id", (req, res) => {
+router.get("/:id", (req, res) => {
 	const user = users.find((user) => user.id === parseInt(req.params.id));
 
 	if (!user)
@@ -27,7 +27,7 @@ router.get("/api/users/:id", (req, res) => {
 
 //
 // POST
-router.post("/api/users", (req, res) => {
+router.post("/", (req, res) => {
 	const { error } = validateUser(req.body);
 
 	if (error)
@@ -47,7 +47,7 @@ router.post("/api/users", (req, res) => {
 
 //
 // PUT
-router.put("/api/users/:id", (req, res) => {
+router.put("/:id", (req, res) => {
 	// Look up the user
 	const user = users.find((user) => user.id === parseInt(req.params.id));
 	// If not existing, return 404
@@ -70,7 +70,7 @@ router.put("/api/users/:id", (req, res) => {
 
 //
 // DELETE
-router.delete("/api/users/:id", (req, res) => {
+router.delete("/:id", (req, res) => {
 	// Look up the user
 	const user = users.find((user) => user.id === parseInt(req.params.id));
 	// If not existing, return 404

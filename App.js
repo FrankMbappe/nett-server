@@ -5,6 +5,9 @@ const morgan = require("morgan"); // Logging
 const startupDebugger = require("debug")("ns:startup"); // Debugging startup
 
 const logger = require("./logger");
+
+/* ROUTES */
+const root = require("./routes/root");
 const users = require("./routes/users");
 
 const app = express();
@@ -17,6 +20,7 @@ app.use(logger()); // Custom one
 
 /* Telling that every route starting by '/api/foo' should be handled by the foo router */
 app.use("/api/users", users);
+app.use("/", root);
 
 /* If we are in development mode, Morgan is enabled */
 if (app.get("env") === "development") {
@@ -27,11 +31,5 @@ if (app.get("env") === "development") {
 	// Custom environment variable
 	startupDebugger(`Test variable: ${config.get("testvar")}`);
 }
-
-//
-// GET
-app.get("/", (_, res) => {
-	res.send("Hello world");
-});
 
 app.listen(port, () => console.log(`Listening port ${port}...`));
