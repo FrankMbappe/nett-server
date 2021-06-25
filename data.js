@@ -21,7 +21,16 @@ const users = [
 	},
 ];
 
-module.exports = users;
+const classrooms = [
+	{
+		id: "cls-001",
+		name: "IUC BTECH SWE 3 2020-2021",
+		description:
+			"This is the official classroom of level 3 Btech software engineering students of IUC.",
+	},
+];
+
+module.exports = { users, classrooms };
 
 //
 //

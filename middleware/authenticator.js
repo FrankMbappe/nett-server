@@ -1,5 +1,7 @@
+const debug = require("debug")("ns:mdlw"); // Debugging startup
+
 function authenticate(req, res, next) {
-	console.log("Authenticating...");
+	debug("Authenticating...");
 	// Nothing will be executed unless next() is called
 	next();
 }

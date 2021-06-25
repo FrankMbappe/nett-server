@@ -1,5 +1,7 @@
+const debug = require("debug")("ns:mdlw"); // Debugging startup
+
 function log(req, res, next) {
-	console.log("Logging...");
+	debug("Logging...");
 	// Nothing will be executed unless next() is called
 	next();
 }

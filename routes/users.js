@@ -2,7 +2,7 @@ const express = require("express"); // Server
 const Joi = require("joi"); // Input validation
 
 const router = express.Router(); // Instead of creating a new server
-const users = require("../data"); // Data
+const { users } = require("../data"); // Data
 
 /* Input validation function */
 function validateUser(user) {
@@ -11,7 +11,7 @@ function validateUser(user) {
 }
 
 //
-// GET
+// GETs
 router.get("/", (_, res) => {
 	res.send(users);
 });
@@ -26,7 +26,7 @@ router.get("/:id", (req, res) => {
 });
 
 //
-// POST
+// POSTs
 router.post("/", (req, res) => {
 	const { error } = validateUser(req.body);
 
@@ -46,7 +46,7 @@ router.post("/", (req, res) => {
 });
 
 //
-// PUT
+// PUTs
 router.put("/:id", (req, res) => {
 	// Look up the user
 	const user = users.find((user) => user.id === parseInt(req.params.id));
@@ -69,7 +69,7 @@ router.put("/:id", (req, res) => {
 });
 
 //
-// DELETE
+// DELETEs
 router.delete("/:id", (req, res) => {
 	// Look up the user
 	const user = users.find((user) => user.id === parseInt(req.params.id));
