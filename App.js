@@ -6,7 +6,7 @@ const startupDebugger = require("debug")("ns:startup"); // Debugging startup
 const dbDebugger = require("debug")("ns:db"); // Debugging startup
 const Joi = require("joi"); // Input validation
 
-const courses = require("./datatest");
+const users = require("./datatest");
 const logger = require("./logger");
 
 const app = express();
@@ -27,9 +27,10 @@ if (app.get("env") === "development") {
 	startupDebugger(`Test variable: ${config.get("testvar")}`);
 }
 
-function validateCourse(course) {
+/* User input validation function */
+function validateUser(user) {
 	const schema = Joi.object({ value: Joi.string().min(3).required() });
-	return schema.validate(course);
+	return schema.validate(user);
 }
 
 //
@@ -37,25 +38,23 @@ function validateCourse(course) {
 app.get("/", (_, res) => {
 	res.send("Hello world");
 });
-app.get("/api/courses", (_, res) => {
-	res.send(courses);
+app.get("/api/users", (_, res) => {
+	res.send(users);
 });
-app.get("/api/courses/:id", (req, res) => {
-	const course = courses.find(
-		(course) => course.id === parseInt(req.params.id)
-	);
+app.get("/api/users/:id", (req, res) => {
+	const user = users.find((user) => user.id === parseInt(req.params.id));
 
-	if (!course)
+	if (!user)
 		return res
 			.status(404)
-			.send(`No existing course with the given ID '${req.params.id}'`);
-	else res.send(course);
+			.send(`No existing user with the given ID '${req.params.id}'`);
+	else res.send(user);
 });
 
 //
 // POST
-app.post("/api/courses", (req, res) => {
-	const { error } = validateCourse(req.body);
+app.post("/api/users", (req, res) => {
+	const { error } = validateUser(req.body);
 
 	if (error)
 		return res.status(400).send(error.details.map(({ message }) => message));
@@ -63,59 +62,55 @@ app.post("/api/courses", (req, res) => {
 	// Everything is okay
 	const { value } = req.body;
 
-	const course = {
-		id: courses.length + 1,
+	const user = {
+		id: users.length + 1,
 		value: value,
 	};
-	courses.push(course);
+	users.push(user);
 
-	res.send(course);
+	res.send(user);
 });
 
 //
 // PUT
-app.put("/api/courses/:id", (req, res) => {
-	// Look up the course
-	const course = courses.find(
-		(course) => course.id === parseInt(req.params.id)
-	);
+app.put("/api/users/:id", (req, res) => {
+	// Look up the user
+	const user = users.find((user) => user.id === parseInt(req.params.id));
 	// If not existing, return 404
-	if (!course)
+	if (!user)
 		return res
 			.status(404)
-			.send(`No existing course with the given ID '${req.params.id}'`);
+			.send(`No existing user with the given ID '${req.params.id}'`);
 
 	// Otw, validate
 	// If invalid, return 400 - Bad request
-	const { error } = validateCourse(req.body);
+	const { error } = validateUser(req.body);
 	if (error)
 		return res.status(400).send(error.details.map(({ message }) => message));
 
-	// Update course
-	// Return updated course
-	course.value = req.body.value;
-	res.send(course);
+	// Update user
+	// Return updated user
+	user.value = req.body.value;
+	res.send(user);
 });
 
 //
 // DELETE
-app.delete("/api/courses/:id", (req, res) => {
-	// Look up the course
-	const course = courses.find(
-		(course) => course.id === parseInt(req.params.id)
-	);
+app.delete("/api/users/:id", (req, res) => {
+	// Look up the user
+	const user = users.find((user) => user.id === parseInt(req.params.id));
 	// If not existing, return 404
-	if (!course)
+	if (!user)
 		return res
 			.status(404)
-			.send(`No existing course with the given ID '${req.params.id}'`);
+			.send(`No existing user with the given ID '${req.params.id}'`);
 
 	// Otw, delete
-	const index = courses.indexOf(course);
-	courses.splice(index, 1);
+	const index = users.indexOf(user);
+	users.splice(index, 1);
 
-	// Return course
-	res.send(course);
+	// Return user
+	res.send(user);
 });
 
 app.listen(port, () => console.log(`Listening port ${port}...`));
