@@ -1,21 +1,31 @@
-const express = require("express");
-const Joi = require("joi");
+const express = require("express"); // Server
+const config = require("config"); // Configuration
+const helmet = require("helmet"); // Security
+const morgan = require("morgan"); // Logging
+const startupDebugger = require("debug")("ns:startup"); // Debugging startup
+const dbDebugger = require("debug")("ns:db"); // Debugging startup
+const Joi = require("joi"); // Input validation
+
+const courses = require("./datatest");
 const logger = require("./logger");
-const authenticate = require("./authenticator");
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+/* Middleware */
 app.use(express.json());
-app.use(logger);
-app.use(authenticate);
+app.use(helmet());
+app.use(logger()); // Custom one
 
-const courses = [
-	{ id: 1, value: "Data Mining" },
-	{ id: 2, value: "Functional French" },
-	{ id: 3, value: "Software Process & Quality" },
-	{ id: 4, value: "Compiler Design" },
-];
+/* If we are in development mode, morgan is enabled */
+if (app.get("env") === "development") {
+	app.use(morgan("tiny"));
+	startupDebugger("Morgan enabled...");
+	/* Showing server configuration depending on the environment */
+	startupDebugger(`Application name: ${config.get("name")}`);
+	// Custom environment variable
+	startupDebugger(`Test variable: ${config.get("testvar")}`);
+}
 
 function validateCourse(course) {
 	const schema = Joi.object({ value: Joi.string().min(3).required() });
