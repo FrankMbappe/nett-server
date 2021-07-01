@@ -16,11 +16,22 @@ const userTypes = {
 	student: "student",
 	consultant: "consultant",
 };
-
+const userGenders = {
+	female: "female",
+	male: "male",
+	other: "other",
+};
 const postTypes = {
 	normal: "normal",
 	tutorial: "tutorial",
 	quiz: "quiz",
 };
 
-module.exports = { mongoUri, refs, patterns, userTypes, postTypes };
+module.exports = {
+	mongoUri,
+	refs,
+	patterns,
+	userTypes,
+	postTypes,
+	userGenders,
+};

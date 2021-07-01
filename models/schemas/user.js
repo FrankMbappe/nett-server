@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const debug = require("debug")("ns:schemas::user");
-const { refs, patterns, userTypes } = require("../../config/nett");
+const { refs, patterns, userTypes, userGenders } = require("../../config/nett");
 
 //* PHONE NUMBER API
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -15,19 +15,22 @@ const basicProps = {
 		type: String,
 		required: true,
 		trim: true,
-		validator: {
-			isAsync: true,
-			validate: function (value, callback) {
+		unique: true,
+		validate: {
+			validator: (value) =>
 				/* Checking if the phone number is valid, using Twilio Lookup API */
 				client.lookups.v1
 					.phoneNumbers(value)
 					.fetch({ type: ["carrier"] })
-					.then((phone_number) => callback(phone_number.countryCode != null))
+					.then((phone_number) =>
+						Promise.resolve(phone_number.countryCode != null)
+					)
 					.catch((error) => {
 						debug(error);
-						callback(false);
-					});
-			},
+						return Promise.reject(
+							new Error(`The input '${value}' is not a valid phone number`)
+						);
+					}),
 		},
 	},
 	_type: {
@@ -39,40 +42,43 @@ const basicProps = {
 	},
 	classrooms: [{ type: mongoose.Types.ObjectId, ref: refs.classroom }],
 	profile: {
-		nomination: {
-			type: String,
-			enum: ["Dr", "Mr", "Mrs", "Miss"],
-			lowercase: true,
+		type: {
+			nomination: {
+				type: String,
+				enum: ["Dr", "Mr", "Mrs", "Miss"],
+				lowercase: true,
+			},
+			firstName: {
+				type: String,
+				required: true,
+				minlength: 1,
+				maxlength: 255,
+				lowercase: true,
+				trim: true,
+			},
+			lastName: {
+				type: String,
+				required: true,
+				minlength: 1,
+				maxlength: 255,
+				lowercase: true,
+				trim: true,
+			},
+			birthDate: Date,
+			email: { type: String, matches: patterns.email, unique: true },
+			gender: {
+				type: String,
+				required: true,
+				enum: Object.values(userGenders),
+				lowercase: true,
+			},
+			picUri: String,
 		},
-		firstName: {
-			type: String,
-			required: true,
-			minlength: 1,
-			maxlength: 255,
-			lowercase: true,
-			trim: true,
+		pocket: {
+			posts: [{ type: mongoose.Types.ObjectId, ref: refs.post }],
+			// TODO: notes: [],
 		},
-		lastName: {
-			type: String,
-			required: true,
-			minlength: 1,
-			maxlength: 255,
-			lowercase: true,
-			trim: true,
-		},
-		birthday: Date,
-		email: { type: String, matches: patterns.email },
-		gender: {
-			type: String,
-			required: true,
-			enum: ["female", "male", "other"],
-			lowercase: true,
-		},
-		picUri: String,
-	},
-	pocket: {
-		posts: [{ type: mongoose.Types.ObjectId, ref: refs.post }],
-		// TODO: notes: [],
+		required: false,
 	},
 };
 //@ Student
@@ -92,19 +98,21 @@ const consultantProps = {
 	proPhone: {
 		type: String,
 		trim: true,
-		validator: {
-			isAsync: true,
-			validate: function (value, callback) {
+		validate: {
+			validator: (value) =>
 				/* Checking if the phone number is valid, using Twilio Lookup API */
 				client.lookups.v1
 					.phoneNumbers(value)
 					.fetch({ type: ["carrier"] })
-					.then((phone_number) => callback(phone_number.countryCode != null))
+					.then((phone_number) =>
+						Promise.resolve(phone_number.countryCode != null)
+					)
 					.catch((error) => {
 						debug(error);
-						callback(false);
-					});
-			},
+						return Promise.reject(
+							new Error(`The input '${value}' is not a valid phone number`)
+						);
+					}),
 		},
 	},
 	proEmail: { type: String, matches: patterns.email },

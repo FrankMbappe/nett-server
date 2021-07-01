@@ -18,7 +18,7 @@ router.get("/:id", async (req, res) => {
 		res.send(user);
 	} catch (exception) {
 		for (field in exception.errors) {
-			debug(exception.errors[field], "\n");
+			debug(exception.errors[field].message, "\n");
 		}
 		return res
 			.status(404)
@@ -36,19 +36,12 @@ router.post("/", async (req, res) => {
 		return res.status(400).send(error.details.map(({ message }) => message));
 
 	// Saving the user
-	try {
-		const result = await new User(req.body).save();
-		debug(result);
+	User.create(req.body, (err, user) => {
+		if (err) return res.status(400).send(err);
 
-		res.send(result);
-	} catch (exception) {
-		for (field in exception.errors) {
-			debug(exception.errors[field], "\n");
-		}
-		return res
-			.status(500)
-			.send(`An internal server error occured while executing the request.`);
-	}
+		debug(`A User has been added: ${user}`);
+		res.send(user);
+	});
 });
 
 //
