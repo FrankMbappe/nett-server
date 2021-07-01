@@ -24,8 +24,9 @@
     "helmet": "^4.6.0",
     "joi": "^17.4.0",
     "lodash": "^4.17.21",
-    "mongoose": "^5.12.15",
-    "morgan": "^1.10.0"
+    "mongoose": "^5.13.0",
+    "morgan": "^1.10.0",
+    "twilio": "^3.64.0"
   },
   "devDependencies": {
     "eslint": "^7.29.0"

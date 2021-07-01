@@ -10,18 +10,54 @@ mongoose
 	.then(() => debug("Connected to MongoDB..."))
 	.catch((err) => debug("Could not connect to MongoDB...", err));
 
-/* SCHEMAS */
+/* SCHEMAS AND VALIDATORS */
 const userProfileSchema = new mongoose.Schema({
 	picUri: String,
-	firstName: String,
-	lastName: String,
+	firstName: {
+		type: String, // All the properties down here are only available when using Strings
+		required: true, // Apart from this
+		minlength: 5,
+		maxlength: 255,
+		lowercase: true, // Converts automatically input to lowercase
+		trim: true, // Removes trailing spaces at the begining & end of the input
+	},
+	lastName: {
+		type: String,
+		required: true,
+		minlength: 5,
+		maxlength: 255,
+		lowercase: true, // Converts automatically input to lowercase
+	},
+	type: {
+		type: String,
+		required: true,
+		enum: ["teacher", "student", "consultant"], //* Input must match one of these values
+	},
 });
 const userSchema = new mongoose.Schema({
 	creationDate: { type: Date, default: Date.now },
-	profile: {
-		type: userProfileSchema,
+	profile: userProfileSchema,
+	phone: { type: String, required: true },
+	housePrice: {
+		type: Number,
+		required: function () {
+			return this.profile != null;
+		},
+		min: 10,
+		max: 2000,
+		validate: {
+			isAsync: false, // If validator does some async work, we set this to true
+			// validator: function (value, callback) {
+			// 	@ Do some async work... then
+			// 	callback(result); //@ We call callback with the result
+			// },
+			validator: function (value) {
+				//* Custom validator
+				return value && value.length > 0;
+			},
+			message: "A house price should be greater than zero", //* Error message
+		},
 	},
-	phone: String,
 });
 
 /* MODELS */
@@ -35,11 +71,17 @@ async function createUser() {
 			firstName: "Marceline",
 			lastName: "Ewube",
 		},
-		phone: "+237656895349",
 	});
 
-	const result = await user.save();
-	debug(result);
+	try {
+		// We can trigger validation using: user.validate((err) => debug(err));
+		const result = await user.save();
+		debug(result);
+	} catch (exception) {
+		for (field in exception.errors) {
+			debug(exception.errors[field], "\n");
+		}
+	}
 }
 
 async function getUser() {
@@ -90,26 +132,26 @@ async function updateUser(id, value) {
 	// 3. save()
 
 	//*1
-	const user = User.findById(id);
-	if (!user) return;
+	const userToUpdate1 = User.findById(id);
+	if (!userToUpdate1) return;
 
 	//*2
 	// We can put Business rules here like: if (user.hasBeenBlocked) return;
-	user.phone = value;
+	userToUpdate1.phone = value;
 	//@ OR
-	user.set({
+	userToUpdate1.set({
 		phone: value,
 	});
 
 	//*3
-	const result = await user.save();
-	debug(result);
+	const result1 = await userToUpdate1.save();
+	debug(result1);
 
 	//$ II. Update first
 	// 1. Update directly
 	//@ 2. Optionally: Get the updated document
 	//* 1
-	const result = await User.updateOne(
+	const result2 = await User.updateOne(
 		{ _id: id }, // Filter
 		{
 			$set: {
@@ -119,7 +161,7 @@ async function updateUser(id, value) {
 		}
 	);
 	//@ Optional: Get the updated document
-	const user = await User.findOneAndUpdate(
+	const userToUpdate2 = await User.findOneAndUpdate(
 		{ _id: id }, // Filter
 		{
 			//? Check MongoDB update operators for more information.
@@ -129,7 +171,7 @@ async function updateUser(id, value) {
 		},
 		{ new: true } // Without this, it would return the previous value.
 	);
-	debug(user);
+	debug(userToUpdate2);
 }
 
 async function removeUser(id) {
@@ -137,12 +179,12 @@ async function removeUser(id) {
 	debug(result);
 
 	//@ Optionally we can get the deleted user
-	// const user = User.findOneAndRemove({ _id: id});
-	// debug(user);
+	const user = User.findOneAndRemove({ _id: id });
+	debug(user);
 }
 
 /* FUNCTIONS CALLS */
-//// createUser();
-//// getUser();
-//// updateUser();
-removeUser();
+// createUser();
+// getUser();
+// updateUser();
+// removeUser();
