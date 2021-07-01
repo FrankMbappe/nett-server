@@ -17,4 +17,10 @@ const userTypes = {
 	consultant: "consultant",
 };
 
-module.exports = { mongoUri, refs, patterns, userTypes };
+const postTypes = {
+	normal: "normal",
+	tutorial: "tutorial",
+	quiz: "quiz",
+};
+
+module.exports = { mongoUri, refs, patterns, userTypes, postTypes };

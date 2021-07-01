@@ -1,96 +1,100 @@
 const express = require("express"); // Server
-const Joi = require("joi"); // Input validation
-
+const debug = require("debug")("ns:routes::users"); // Debugger
 const router = express.Router(); // Instead of creating a new server
-const { classrooms } = require("../data"); // Data
-
-/* Input validation function */
-function validateClassroom(classroom) {
-	const schema = Joi.object({ value: Joi.string().min(3).required() });
-	return schema.validate(classroom);
-}
+const { User, validate } = require("../models/User"); // Validating input
 
 //
 // GETs
-router.get("/", (_, res) => {
-	res.send(classrooms);
+router.get("/", async (_, res) => {
+	const users = await User.find().sort("creationDate");
+	res.send(users);
 });
-router.get("/:id", (req, res) => {
-	const classroom = classrooms.find(
-		(classroom) => classroom.id === req.params.id
-	);
+router.get("/:id", async (req, res) => {
+	try {
+		const user = await User.findById(req.params.id);
 
-	if (!classroom)
+		debug("A User has been retrieved: " + JSON.stringify(user));
+
+		res.send(user);
+	} catch (exception) {
+		for (field in exception.errors) {
+			debug(exception.errors[field], "\n");
+		}
 		return res
 			.status(404)
-			.send(`No existing classroom with the given ID '${req.params.id}'`);
-	else res.send(classroom);
+			.send(`No existing user with the given ID '${req.params.id}'`);
+	}
 });
 
 //
 // POSTs
-router.post("/", (req, res) => {
-	const { error } = validateClassroom(req.body);
+router.post("/", async (req, res) => {
+	// Input validation
+	const { error } = validate(req.body);
 
 	if (error)
 		return res.status(400).send(error.details.map(({ message }) => message));
 
-	// Everything is okay
-	const { value } = req.body;
+	// Saving the user
+	try {
+		const result = await new User(req.body).save();
+		debug(result);
 
-	const classroom = {
-		id: classrooms.length + 1,
-		value: value,
-	};
-	classrooms.push(classroom);
-
-	res.send(classroom);
+		res.send(result);
+	} catch (exception) {
+		for (field in exception.errors) {
+			debug(exception.errors[field], "\n");
+		}
+		return res
+			.status(500)
+			.send(`An internal server error occured while executing the request.`);
+	}
 });
 
 //
 // PUTs
-router.put("/:id", (req, res) => {
-	// Look up the classroom
-	const classroom = classrooms.find(
-		(classroom) => classroom.id === req.params.id
-	);
-	// If not existing, return 404
-	if (!classroom)
-		return res
-			.status(404)
-			.send(`No existing classroom with the given ID '${req.params.id}'`);
-
-	// Otw, validate
+router.put("/:id", async (req, res) => {
 	// If invalid, return 400 - Bad request
-	const { error } = validateClassroom(req.body);
+	const { error } = validate(req.body);
 	if (error)
 		return res.status(400).send(error.details.map(({ message }) => message));
 
-	// Update classroom
-	// Return updated classroom
-	classroom.value = req.body.value;
-	res.send(classroom);
+	// Else, try to update
+	try {
+		const user = await User.findByIdAndUpdate(
+			req.params.id,
+			{
+				$set: req.body,
+			},
+			{ new: true }
+		);
+
+		res.send(user);
+	} catch (exception) {
+		for (field in exception.errors) {
+			debug(exception.errors[field], "\n");
+		}
+		return res
+			.status(404)
+			.send(`No existing user with the given ID '${req.params.id}'`);
+	}
 });
 
 //
 // DELETEs
-router.delete("/:id", (req, res) => {
-	// Look up the classroom
-	const classroom = classrooms.find(
-		(classroom) => classroom.id === req.params.id
-	);
-	// If not existing, return 404
-	if (!classroom)
+router.delete("/:id", async (req, res) => {
+	try {
+		const user = await User.findByIdAndDelete(req.params.id);
+
+		res.send(user);
+	} catch (exception) {
+		for (field in exception.errors) {
+			debug(exception.errors[field], "\n");
+		}
 		return res
 			.status(404)
-			.send(`No existing classroom with the given ID '${req.params.id}'`);
-
-	// Otw, delete
-	const index = classrooms.indexOf(classroom);
-	classrooms.splice(index, 1);
-
-	// Return classroom
-	res.send(classroom);
+			.send(`No existing user with the given ID '${req.params.id}'`);
+	}
 });
 
 module.exports = router;
