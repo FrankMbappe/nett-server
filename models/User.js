@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-const { refs, patterns, userTypes } = require("../config/nett");
-const Schema = mongoose.Schema;
+const Joi = require("joi"); // Input validation
 const debug = require("debug")("ns:models"); // Debugging models
+const { refs, patterns, userTypes } = require("../config/nett");
 
 // Twilio API config
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -137,7 +137,7 @@ const teacherProps = {
 };
 
 // Schema
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
 	...userProps,
 	studentProps: {
 		type: { ...studentProps },
@@ -159,6 +159,15 @@ const userSchema = new Schema({
 	},
 });
 
+// Input validation
+function validate(user) {
+	const schema = Joi.object({
+		_type: Joi.string().equal(Object.values(userTypes)).required(),
+		phone: Joi.string().min(5).max(255).required(),
+	});
+	return schema.validate(user);
+}
+
 const User = mongoose.model("User", userSchema);
 
-module.exports = User;
+module.exports = { User, validate };
