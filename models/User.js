@@ -6,7 +6,9 @@ const { userTypes } = require("../config/nett");
 // Input validation
 function validate(user) {
 	const schema = Joi.object({
-		_type: Joi.string().equal(Object.values(userTypes)).required(),
+		_type: Joi.string()
+			.valid(...Object.values(userTypes))
+			.required(),
 		phone: Joi.string().min(5).max(255).required(),
 	});
 	return schema.validate(user);

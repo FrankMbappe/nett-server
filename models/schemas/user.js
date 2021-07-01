@@ -38,7 +38,6 @@ const basicProps = {
 		trim: true,
 	},
 	classrooms: [{ type: mongoose.Types.ObjectId, ref: refs.classroom }],
-	// lastTimeConnected: Date,
 	profile: {
 		nomination: {
 			type: String,

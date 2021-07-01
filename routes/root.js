@@ -1,5 +1,4 @@
 const express = require("express"); // Server
-
 const router = express.Router(); // Instead of creating a new server
 
 //

@@ -3,7 +3,7 @@ const debug = require("debug")("ns:mongo"); // Debugger
 
 async function connectToMongoDb() {
 	try {
-		await mongoose.connect("mongodb://localhost/playground", {
+		await mongoose.connect("mongodb://localhost/nettdb", {
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
 		});
