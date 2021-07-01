@@ -32,10 +32,15 @@ app.use("/", root);
 if (app.get("env") === "development") {
 	app.use(morgan("tiny", { stream: { write: (msg) => debug(msg) } }));
 	debug("Morgan enabled...");
+
 	/* Showing server configuration depending on the environment */
 	debug(`Application name: ${config.get("name")}`);
+
 	// Custom environment variable
-	// debug(`Test variable: ${config.get("testvar")}`);
+	if (!process.env.DEBUG)
+		console.log(
+			"'DEBUG' environment variable is not yet set. Debugger logs cannot be displayed."
+		);
 }
 
 app.listen(port, () => debug(`Listening port ${port}...`));
