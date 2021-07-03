@@ -6,6 +6,10 @@ const debug = require("debug")("ns:startup"); // Debugging startup
 const logger = require("./middleware/logger"); // Custom middleware
 const connectToMongoDb = require("./database/mongo"); // Database
 
+/* INPUT VALIDATION */
+const Joi = require("joi");
+Joi.objectId = require("joi-objectid")(Joi); // To use this prop everywhere Joi is used
+
 /* ROUTES */
 const root = require("./routes/root");
 const users = require("./routes/users");
@@ -24,7 +28,7 @@ app.use(express.json());
 app.use(helmet());
 app.use(logger);
 
-/* Telling that every route starting by '/api/foo' should be handled by the foo router */
+/* Telling that every route starting by '/api/foo' should be handled by the 'foo' router */
 app.use("/api/classrooms", classrooms);
 app.use("/api/users", users);
 app.use("/api/check", check);
