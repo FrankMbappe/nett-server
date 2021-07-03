@@ -11,10 +11,9 @@ const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi); // To use this prop everywhere Joi is used
 
 /* ROUTES */
-const root = require("./routes/root");
-const users = require("./routes/users");
-const check = require("./routes/check");
+const checks = require("./routes/checks");
 const classrooms = require("./routes/classrooms");
+const users = require("./routes/users");
 
 /* SERVER CREATION */
 const app = express();
@@ -29,10 +28,9 @@ app.use(helmet());
 app.use(logger);
 
 /* Telling that every route starting by '/api/foo' should be handled by the 'foo' router */
+app.use("/api/checks", checks);
 app.use("/api/classrooms", classrooms);
 app.use("/api/users", users);
-app.use("/api/check", check);
-app.use("/", root);
 
 /* If we are in development mode, Morgan is enabled */
 if (app.get("env") === "development") {

@@ -10,20 +10,16 @@ router.get("/", async (_, res) => {
 	res.send(users);
 });
 router.get("/:id", async (req, res) => {
-	try {
-		const user = await User.findById(req.params.id);
+	User.findById(req.params.id, (err, user) => {
+		if (err) return res.status(400).send(err.message);
 
-		debug("A User has been retrieved: " + JSON.stringify(user));
+		if (!user)
+			return res
+				.status(404)
+				.send(`User with ID '${req.params.id}' does not exist.`);
 
 		res.send(user);
-	} catch (exception) {
-		for (field in exception.errors) {
-			debug(exception.errors[field].message, "\n");
-		}
-		return res
-			.status(404)
-			.send(`No existing user with the given ID '${req.params.id}'`);
-	}
+	});
 });
 
 //
@@ -32,12 +28,17 @@ router.post("/", async (req, res) => {
 	// Input validation
 	const { error } = validate(req.body);
 
-	if (error)
-		return res.status(400).send(error.details.map(({ message }) => message));
+	if (error) return res.status(400).send(error.details[0].message);
+
+	const user = await User.findOne({ phone: req.body.phone });
+	if (user)
+		return res
+			.status(400)
+			.send(`User with the phone number '${req.body.phone}' already exists.`);
 
 	// Saving the user
 	User.create(req.body, (err, user) => {
-		if (err) return res.status(400).send(err);
+		if (err) return res.status(500).send(err.message);
 
 		debug(`A User has been added: ${user}`);
 		res.send(user);
@@ -49,45 +50,48 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
 	// If invalid, return 400 - Bad request
 	const { error } = validate(req.body);
-	if (error)
-		return res.status(400).send(error.details.map(({ message }) => message));
+
+	if (error) return res.status(400).send(error.details[0].message);
 
 	// Else, try to update
-	try {
-		const user = await User.findByIdAndUpdate(
-			req.params.id,
-			{
-				$set: req.body,
-			},
-			{ new: true }
-		);
+	const user = await User.findById(req.params.id);
 
-		res.send(user);
-	} catch (exception) {
-		for (field in exception.errors) {
-			debug(exception.errors[field], "\n");
-		}
+	if (!user)
 		return res
-			.status(404)
-			.send(`No existing user with the given ID '${req.params.id}'`);
-	}
+			.status(400)
+			.send(`No existing user with the ID '${req.params.id}'.`);
+
+	// Updating the user here
+	User.findByIdAndUpdate(
+		req.params.id,
+		{ $set: req.body },
+		{ new: true },
+		(err, user, _) => {
+			if (err) return res.status(500).send(err.message);
+
+			debug(`A User has been updated: ${user}`);
+			res.send(user);
+		}
+	);
 });
 
 //
 // DELETEs
 router.delete("/:id", async (req, res) => {
-	try {
-		const user = await User.findByIdAndDelete(req.params.id);
+	const user = await User.findById(req.params.id);
 
-		res.send(user);
-	} catch (exception) {
-		for (field in exception.errors) {
-			debug(exception.errors[field], "\n");
-		}
+	if (!user)
 		return res
-			.status(404)
-			.send(`No existing user with the given ID '${req.params.id}'`);
-	}
+			.status(400)
+			.send(`No existing user with the ID '${req.params.id}'.`);
+
+	// Deleting the user here
+	User.findByIdAndDelete(req.params.id, (err, user, _) => {
+		if (err) return res.status(500).send(err.message);
+
+		debug(`A User has been deleted: ${user}`);
+		res.send(user);
+	});
 });
 
 module.exports = router;
