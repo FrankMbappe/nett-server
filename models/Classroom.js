@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 const {
-	classroom: validator,
+	classroomValidator,
 	classroomSchema,
 } = require("./validators/classroom");
 
 // Input validation
 function validate(classroom) {
-	return validator.validate(classroom);
+	return classroomValidator.validate(classroom);
 }
 
 const Classroom = mongoose.model("Classroom", classroomSchema);

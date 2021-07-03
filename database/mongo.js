@@ -6,6 +6,8 @@ async function connectToMongoDb() {
 		await mongoose.connect("mongodb://localhost/nettdb", {
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
+			useFindAndModify: false,
+			useCreateIndex: true,
 		});
 		debug("Successfully connected to the database...");
 	} catch (error) {

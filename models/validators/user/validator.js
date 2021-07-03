@@ -6,7 +6,7 @@ const user = Joi.object({
 		.valid(...Object.values(userTypes))
 		.required(),
 	phone: Joi.string().min(5).max(255).required(),
-	classrooms: Joi.array(Joi.objectId().required()),
+	classrooms: Joi.array().items(Joi.objectId().required()),
 	profile: Joi.object({
 		nomination: Joi.string().alphanum().max(25),
 		firstName: Joi.string().alphanum().min(3).max(255).required(),
@@ -29,7 +29,7 @@ const user = Joi.object({
 		proPhone: Joi.string().alphanum().max(255),
 		proEmail: Joi.string().email(),
 		mainDomain: Joi.string().alphanum().min(3).max(255).required(),
-		additDomains: Joi.array(Joi.string().min(3).max(255)),
+		additDomains: Joi.array().items(Joi.string().min(3).max(255)),
 		yearsOfExperience: Joi.number().positive().max(100).required(),
 	}).when("_type", {
 		is: userTypes.consultant,
