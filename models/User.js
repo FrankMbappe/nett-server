@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
-const userSchema = require("./schemas/user");
+const userSchema = require("./validators/user");
 const { userTypes, userGenders } = require("../config/nett");
 
 // Input validation
@@ -10,7 +10,7 @@ function validate(user) {
 			.valid(...Object.values(userTypes))
 			.required(),
 		phone: Joi.string().min(5).max(255).required(),
-		classrooms: Joi.array(),
+		classrooms: Joi.array(Joi.objectId().required()),
 		profile: Joi.object({
 			nomination: Joi.string().alphanum().max(25),
 			firstName: Joi.string().alphanum().min(3).max(255).required(),
@@ -33,8 +33,8 @@ function validate(user) {
 			proPhone: Joi.string().alphanum().max(255),
 			proEmail: Joi.string().email(),
 			mainDomain: Joi.string().alphanum().min(3).max(255).required(),
-			additDomains: Joi.array(),
-			yearsOfExperience: Joi.number().positive().max(150).required(),
+			additDomains: Joi.array(Joi.string().min(3).max(255)),
+			yearsOfExperience: Joi.number().positive().max(100).required(),
 		}).when("_type", {
 			is: userTypes.consultant,
 			then: Joi.required(),

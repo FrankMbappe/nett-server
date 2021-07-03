@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
-const debug = require("debug")("ns:schemas::user");
-const { refs, patterns, userTypes, userGenders } = require("../../config/nett");
+const debug = require("debug")("ns:validators::user");
+const { refs, userTypes, userGenders } = require("../../config/nett");
 
 //* PHONE NUMBER API
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -65,7 +65,7 @@ const basicProps = {
 				trim: true,
 			},
 			birthDate: Date,
-			email: { type: String, matches: patterns.email, unique: true },
+			email: { type: String, unique: true },
 			gender: {
 				type: String,
 				required: true,
@@ -115,7 +115,7 @@ const consultantProps = {
 					}),
 		},
 	},
-	proEmail: { type: String, matches: patterns.email },
+	proEmail: { type: String },
 	mainDomain: {
 		type: String,
 		required: true,

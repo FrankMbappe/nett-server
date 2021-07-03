@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Joi = require("joi");
 const { refs } = require("../../config/nett");
 const { participation, participationSchema } = require("./participation");
 const { post, postSchema } = require("./post");
