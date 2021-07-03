@@ -1,6 +1,16 @@
 const mongoose = require("mongoose");
+const Joi = require("joi");
 const { refs, userTypes } = require("../../config/nett");
 
+// Joi
+const participation = Joi.object({
+	user: Joi.objectId().required(),
+	role: Joi.string()
+		.valid(...Object.values(userTypes).filter((t) => t != userTypes.teacher))
+		.required(),
+});
+
+// Mongoose
 const participationSchema = new mongoose.Schema({
 	joiningDate: { type: Date, default: Date.now },
 	user: { type: mongoose.Types.ObjectId, ref: refs.user, required: true },
@@ -15,4 +25,4 @@ const participationSchema = new mongoose.Schema({
 	},
 });
 
-module.exports = participationSchema;
+module.exports = { participation, participationSchema };

@@ -1,16 +1,13 @@
-const mongoUri = "mongodb://localhost";
+/* Nett-Server configurations */
 
+/* DATABASE REFERENCES */
 const refs = {
 	user: "User",
 	classroom: "Classroom",
 	post: "Post",
 };
 
-const patterns = {
-	email:
-		/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i,
-};
-
+/* USER CONFIGS */
 const userTypes = {
 	teacher: "teacher",
 	student: "student",
@@ -21,17 +18,27 @@ const userGenders = {
 	male: "male",
 	other: "other",
 };
+
+/* POST CONFIGS */
 const postTypes = {
 	normal: "normal",
 	tutorial: "tutorial",
 	quiz: "quiz",
 };
 
+/* FILE CONFIGS */
+const fileTypes = {
+	image: "image",
+	video: "video",
+	other: "other",
+};
+const MAX_FILE_SIZE = 5e8;
+
 module.exports = {
-	mongoUri,
 	refs,
-	patterns,
 	userTypes,
 	postTypes,
 	userGenders,
+	fileTypes,
+	MAX_FILE_SIZE,
 };
