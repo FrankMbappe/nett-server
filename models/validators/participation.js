@@ -3,7 +3,7 @@ const Joi = require("joi");
 const { refs, userTypes } = require("../../config/nett");
 
 // Joi
-const participation = Joi.object({
+const participationValidator = Joi.object({
 	user: Joi.objectId().required(),
 	role: Joi.string()
 		.valid(...Object.values(userTypes).filter((t) => t != userTypes.teacher))
@@ -25,4 +25,4 @@ const participationSchema = new mongoose.Schema({
 	},
 });
 
-module.exports = { participation, participationSchema };
+module.exports = { participationValidator, participationSchema };

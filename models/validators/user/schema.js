@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const debug = require("debug")("ns:validators::user");
-const { refs, userTypes, userGenders } = require("../../config/nett");
+const { refs, userTypes, userGenders } = require("../../../config/nett");
 
 //* PHONE NUMBER API
 const accountSid = process.env.TWILIO_ACCOUNT_SID;

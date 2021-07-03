@@ -3,7 +3,7 @@ const Joi = require("joi");
 const { fileTypes, MAX_FILE_SIZE } = require("../../config/nett");
 
 // Joi
-const file = Joi.object({
+const fileValidator = Joi.object({
 	_type: Joi.string()
 		.valid(...Object.values(fileTypes))
 		.required(),
@@ -22,4 +22,4 @@ const fileSchema = new mongoose.Schema({
 	extension: { type: String, required: true },
 });
 
-module.exports = { file, fileSchema };
+module.exports = { fileValidator, fileSchema };

@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
 const { refs } = require("../../config/nett");
-const { likeSchema, like } = require("./like");
+const { likeValidator, likeSchema } = require("./like");
 
 // Joi
-const comment = Joi.object({
+const commentValidator = Joi.object({
 	author: Joi.objectId().required(),
 	text: Joi.string().min(3).max(500).required(),
-	likes: Joi.array().items(like),
+	likes: Joi.array().items(likeValidator),
 });
 
 // Mongoose
@@ -18,4 +18,4 @@ const commentSchema = new mongoose.Schema({
 	likes: { type: [likeSchema], default: [] },
 });
 
-module.exports = { comment, commentSchema };
+module.exports = { commentValidator, commentSchema };

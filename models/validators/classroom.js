@@ -1,18 +1,21 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
 const { refs } = require("../../config/nett");
-const { participation, participationSchema } = require("./participation");
-const { post, postSchema } = require("./post");
-const { topic, topicSchema } = require("./topic");
+const {
+	participationValidator,
+	participationSchema,
+} = require("./participation");
+const { postValidator, postSchema } = require("./post");
+const { topicValidator, topicSchema } = require("./topic");
 
 // Joi
-const classroom = Joi.object({
+const classroomValidator = Joi.object({
 	name: Joi.string().min(3).max(255).required(),
 	description: Joi.string().max(255),
 	teacher: Joi.objectId().required(),
-	participations: Joi.array().items(participation),
-	posts: Joi.array().items(post),
-	topics: Joi.array().items(topic),
+	participations: Joi.array().items(participationValidator),
+	posts: Joi.array().items(postValidator),
+	topics: Joi.array().items(topicValidator),
 });
 
 // Mongoose
@@ -36,4 +39,4 @@ const classroomSchema = new mongoose.Schema({
 	topics: { type: [topicSchema], default: [] },
 });
 
-module.exports = { classroom, classroomSchema };
+module.exports = { classroomValidator, classroomSchema };

@@ -3,7 +3,7 @@ const Joi = require("joi");
 const { refs } = require("../../config/nett");
 
 // Joi
-const like = Joi.object({
+const likeValidator = Joi.object({
 	author: Joi.objectId().required(),
 });
 
@@ -13,4 +13,4 @@ const likeSchema = new mongoose.Schema({
 	author: { type: mongoose.Types.ObjectId, ref: refs.user },
 });
 
-module.exports = { like, likeSchema };
+module.exports = { likeValidator, likeSchema };
