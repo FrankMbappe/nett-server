@@ -1,4 +1,5 @@
 const express = require("express"); // Server
+const auth = require("../middleware/auth"); // Protecting the routes
 const debug = require("debug")("ns:routes::users"); // Debugger
 const router = express.Router(); // Instead of creating a new server
 const { User, validate } = require("../models/User"); // Validating input
@@ -8,6 +9,10 @@ const { User, validate } = require("../models/User"); // Validating input
 router.get("/", async (_, res) => {
 	const users = await User.find().sort("creationDate");
 	res.send(users);
+});
+router.get("/me", auth, async (req, res) => {
+	const user = await User.findById(req.user._id);
+	res.send(user);
 });
 router.get("/:id", async (req, res) => {
 	User.findById(req.params.id, (err, user) => {
