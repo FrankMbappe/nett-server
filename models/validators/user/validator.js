@@ -8,9 +8,9 @@ const user = Joi.object({
 	phone: Joi.string().min(5).max(255).required(),
 	classrooms: Joi.array().items(Joi.objectId().required()),
 	profile: Joi.object({
-		nomination: Joi.string().alphanum().max(25),
-		firstName: Joi.string().alphanum().min(3).max(255).required(),
-		lastName: Joi.string().alphanum().min(3).max(255).required(),
+		nomination: Joi.string().max(25),
+		firstName: Joi.string().min(3).max(255).required(),
+		lastName: Joi.string().min(3).max(255).required(),
 		birthDate: Joi.date().less("now"),
 		email: Joi.string().email(),
 		gender: Joi.string().valid(...Object.values(userGenders)),
@@ -18,7 +18,7 @@ const user = Joi.object({
 	}),
 
 	studentProps: Joi.object({
-		field: Joi.string().min(3).max(255).alphanum().required(),
+		field: Joi.string().min(3).max(255).required(),
 	}).when("_type", {
 		is: userTypes.student,
 		then: Joi.required(),
@@ -26,9 +26,9 @@ const user = Joi.object({
 
 	consultantProps: Joi.object({
 		company: Joi.string(),
-		proPhone: Joi.string().alphanum().max(255),
+		proPhone: Joi.string().max(255),
 		proEmail: Joi.string().email(),
-		mainDomain: Joi.string().alphanum().min(3).max(255).required(),
+		mainDomain: Joi.string().min(3).max(255).required(),
 		additDomains: Joi.array().items(Joi.string().min(3).max(255)),
 		yearsOfExperience: Joi.number().positive().max(100).required(),
 	}).when("_type", {

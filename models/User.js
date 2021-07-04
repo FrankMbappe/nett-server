@@ -1,10 +1,21 @@
 const mongoose = require("mongoose");
+const config = require("config");
+const jwt = require("jsonwebtoken");
 const { userValidator, userSchema } = require("./validators/user");
 
 // Input validation
 function validate(user) {
 	return userValidator.validate(user);
 }
+
+// Adds the token generation directly to the User object
+userSchema.methods.generateAuthToken = function () {
+	const token = jwt.sign(
+		{ _id: this._id, phone: this.phone },
+		config.get("jwtPrivateKey")
+	);
+	return token;
+};
 
 const User = mongoose.model("User", userSchema);
 

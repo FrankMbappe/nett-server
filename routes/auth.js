@@ -1,7 +1,8 @@
 const express = require("express"); // Server
 const debug = require("debug")("ns:routes::users"); // Debugger
 const router = express.Router(); // Instead of creating a new server
-const { User, validate } = require("../models/User"); // Validating input
+const { User } = require("../models/User"); // Validating input
+const Joi = require("joi");
 
 //
 // GETs
@@ -31,23 +32,14 @@ router.post("/", async (req, res) => {
 	if (error) return res.status(400).send(error.details[0].message);
 
 	const user = await User.findOne({ phone: req.body.phone });
-	if (user)
+	if (!user)
 		return res
 			.status(400)
-			.send(`User with the phone number '${req.body.phone}' already exists.`);
+			.send(`No user with the phone number '${req.body.phone}'`);
 
-	// Saving the user
-	User.create(req.body, (err, user) => {
-		if (err) return res.status(500).send(err.message);
+	const token = user.generateAuthToken();
 
-		debug(`A User has been added: ${user}`);
-
-		// The auth token is generated
-		const token = user.generateAuthToken();
-
-		// And sent to the client
-		res.header("x-auth-token", token).send(user);
-	});
+	res.send(token);
 });
 
 //
@@ -98,5 +90,13 @@ router.delete("/:id", async (req, res) => {
 		res.send(user);
 	});
 });
+
+// Custom validation
+function validate(req) {
+	const schema = Joi.object({
+		phone: Joi.string().min(5).max(255).required(),
+	});
+	return schema.validate(req);
+}
 
 module.exports = router;

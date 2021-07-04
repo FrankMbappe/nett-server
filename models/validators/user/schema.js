@@ -1,11 +1,13 @@
 const mongoose = require("mongoose");
+const config = require("config");
 const debug = require("debug")("ns:validators::user");
 const { refs, userTypes, userGenders } = require("../../../config/nett");
 
-//* PHONE NUMBER API
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const client = require("twilio")(accountSid, authToken);
+// PHONE NUMBER API
+const client = require("twilio")(
+	config.get("twilioAccountSid"),
+	config.get("twilioAuthToken")
+);
 
 //* PROPERTIES
 //@ Basic user properties

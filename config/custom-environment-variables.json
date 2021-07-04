@@ -1,3 +1,5 @@
 {
-	"testvar": "nettserver_testvar"
+	"twilioAccountSid": "TWILIO_ACCOUNT_SID",
+	"twilioAuthToken": "TWILIO_AUTH_TOKEN",
+	"jwtPrivateKey": "nettserver_jwtPrivateKey"
 }

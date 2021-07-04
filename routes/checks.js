@@ -1,12 +1,14 @@
 const express = require("express");
+const config = require("config");
 const { User } = require("../models/User");
 const debug = require("debug")("ns:routes::check");
 const router = express.Router();
 
 //* PHONE NUMBER API
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const client = require("twilio")(accountSid, authToken);
+const client = require("twilio")(
+	config.get("twilioAccountSid"),
+	config.get("twilioAuthToken")
+);
 
 //
 // GET

@@ -1,15 +1,16 @@
 const express = require("express");
+const auth = require("../middleware/auth"); // Protecting the routes
 const debug = require("debug")("ns:routes::classrooms");
 const router = express.Router();
 const { Classroom, validate } = require("../models/Classroom");
 
 //
 // GETs
-router.get("/", async (_, res) => {
+router.get("/", auth, async (req, res) => {
 	const classrooms = await Classroom.find({});
 	res.send(classrooms);
 });
-router.get("/:id", async (req, res) => {
+router.get("/:id", auth, async (req, res) => {
 	try {
 		const classroom = await Classroom.findById(req.params.id);
 
@@ -28,7 +29,7 @@ router.get("/:id", async (req, res) => {
 
 //
 // POSTs
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
 	// Input validation
 	const { error } = validate(req.body);
 
@@ -46,7 +47,7 @@ router.post("/", async (req, res) => {
 
 //
 // PUTs
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
 	// If invalid, return 400 - Bad request
 	const { error } = validate(req.body);
 
@@ -76,7 +77,7 @@ router.put("/:id", async (req, res) => {
 
 //
 // DELETEs
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
 	try {
 		const classroom = await Classroom.findByIdAndDelete(req.params.id);
 

@@ -1,3 +1,6 @@
 {
-	"name": "Nett-Server"
+	"name": "Nett-Server",
+	"twilioAccountSid": "",
+	"twilioAuthToken": "",
+	"jwtPrivateKey": ""
 }

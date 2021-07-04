@@ -6,11 +6,24 @@ const debug = require("debug")("ns:startup"); // Debugging startup
 const logger = require("./middleware/logger"); // Custom middleware
 const connectToMongoDb = require("./database/mongo"); // Database
 
+/* ENVIRONMENT VARIABLES */
+if (
+	!config.get("jwtPrivateKey") ||
+	!config.get("twilioAccountSid") ||
+	!config.get("twilioAuthToken")
+) {
+	console.error(
+		"FATAL ERROR: Some of the required the environment variables are not set."
+	);
+	process.exit(1);
+}
+
 /* INPUT VALIDATION */
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi); // To use this prop everywhere Joi is used
 
 /* ROUTES */
+const auth = require("./routes/auth");
 const checks = require("./routes/checks");
 const classrooms = require("./routes/classrooms");
 const users = require("./routes/users");
@@ -28,6 +41,7 @@ app.use(helmet());
 app.use(logger);
 
 /* Telling that every route starting by '/api/foo' should be handled by the 'foo' router */
+app.use("/api/auth", auth);
 app.use("/api/checks", checks);
 app.use("/api/classrooms", classrooms);
 app.use("/api/users", users);
