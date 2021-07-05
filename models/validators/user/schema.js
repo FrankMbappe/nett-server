@@ -1,13 +1,5 @@
 const mongoose = require("mongoose");
-const config = require("config");
-const debug = require("debug")("ns:validators::user");
 const { refs, userTypes, userGenders } = require("../../../config/nett");
-
-// PHONE NUMBER API
-const client = require("twilio")(
-	config.get("twilioAccountSid"),
-	config.get("twilioAuthToken")
-);
 
 //* PROPERTIES
 //@ Basic user properties
@@ -18,22 +10,6 @@ const basicProps = {
 		required: true,
 		trim: true,
 		unique: true,
-		validate: {
-			validator: (value) =>
-				/* Checking if the phone number is valid, using Twilio Lookup API */
-				client.lookups.v1
-					.phoneNumbers(value)
-					.fetch({ type: ["carrier"] })
-					.then((phone_number) =>
-						Promise.resolve(phone_number.countryCode != null)
-					)
-					.catch((error) => {
-						debug(error);
-						return Promise.reject(
-							new Error(`The input '${value}' is not a valid phone number`)
-						);
-					}),
-		},
 	},
 	_type: {
 		type: String,
@@ -87,7 +63,6 @@ const basicProps = {
 const studentProps = {
 	field: {
 		type: String,
-		required: true,
 		minlength: 3,
 		maxlength: 255,
 		trim: true,
@@ -100,22 +75,6 @@ const consultantProps = {
 	proPhone: {
 		type: String,
 		trim: true,
-		validate: {
-			validator: (value) =>
-				/* Checking if the phone number is valid, using Twilio Lookup API */
-				client.lookups.v1
-					.phoneNumbers(value)
-					.fetch({ type: ["carrier"] })
-					.then((phone_number) =>
-						Promise.resolve(phone_number.countryCode != null)
-					)
-					.catch((error) => {
-						debug(error);
-						return Promise.reject(
-							new Error(`The input '${value}' is not a valid phone number`)
-						);
-					}),
-		},
 	},
 	proEmail: { type: String },
 	mainDomain: {
