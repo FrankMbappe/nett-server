@@ -11,7 +11,7 @@ function validate(user) {
 // Adds the token generation directly to the User object
 userSchema.methods.generateAuthToken = function () {
 	const token = jwt.sign(
-		{ _id: this._id, phone: this.phone },
+		{ _id: this._id, _type: this._type, phone: this.phone },
 		config.get("jwtPrivateKey")
 	);
 	return token;
