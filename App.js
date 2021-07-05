@@ -26,6 +26,7 @@ Joi.objectId = require("joi-objectid")(Joi); // To use this prop everywhere Joi 
 const auth = require("./routes/auth");
 const checks = require("./routes/checks");
 const classrooms = require("./routes/classrooms");
+const countries = require("./routes/countries");
 const users = require("./routes/users");
 
 /* SERVER CREATION */
@@ -44,6 +45,7 @@ app.use(logger);
 app.use("/api/auth", auth);
 app.use("/api/checks", checks);
 app.use("/api/classrooms", classrooms);
+app.use("/api/countries", countries);
 app.use("/api/users", users);
 
 /* If we are in development mode, Morgan is enabled */
