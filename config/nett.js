@@ -32,7 +32,7 @@ const fileTypes = {
 	video: "video",
 	other: "other",
 };
-const MAX_FILE_SIZE = 5e8;
+const MAX_FILE_SIZE = 1e8;
 
 module.exports = {
 	refs,

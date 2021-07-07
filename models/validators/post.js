@@ -15,7 +15,7 @@ const postValidator = Joi.object({
 	text: Joi.string().min(3).max(500),
 	likes: Joi.array().items(likeValidator),
 	comments: Joi.array().items(commentValidator),
-	file: Joi.array().items(fileValidator),
+	file: Joi.object(),
 	topics: Joi.array().items(topicValidator),
 	haveSeen: Joi.array().items(Joi.objectId().required()),
 });
