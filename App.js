@@ -40,6 +40,7 @@ connectToMongoDb();
 app.use(express.json());
 app.use(helmet());
 app.use(logger);
+app.use("/uploads", express.static("uploads")); // Making 'uploads' folder public
 
 /* Telling that every route starting by '/api/foo' should be handled by the 'foo' router */
 app.use("/api/auth", auth);
