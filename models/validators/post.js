@@ -23,7 +23,7 @@ const postValidator = Joi.object({
 // Mongoose
 const postSchema = new mongoose.Schema({
 	creationDate: { type: Date, default: Date.now },
-	author: { type: mongoose.Types.ObjectId, ref: refs.user },
+	author: { type: mongoose.Types.ObjectId, ref: refs.user, required: true },
 	_type: {
 		type: String,
 		enum: Object.values(postTypes),

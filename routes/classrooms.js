@@ -4,10 +4,12 @@ const teacher = require("../middleware/teacher");
 const debug = require("debug")("ns:routes::classrooms");
 const router = express.Router();
 const { Classroom, validate } = require("../models/Classroom");
+const { Post, validate: validatePost } = require("../models/Post");
+const { Comment, validate: validateComment } = require("../models/Comment");
 const { User } = require("../models/User");
 
-//
-// GETs
+//£ CLASSROOMS
+
 router.get("/", auth, async (req, res) => {
 	const classrooms = await Classroom.find({});
 	res.send(classrooms);
@@ -29,8 +31,6 @@ router.get("/:id", auth, async (req, res) => {
 	}
 });
 
-//
-// POSTs
 router.post("/", [auth, teacher], async (req, res) => {
 	const classroomToCreate = { ...req.body, teacher: req.user._id };
 
@@ -74,8 +74,6 @@ router.post("/", [auth, teacher], async (req, res) => {
 	session.endSession();
 });
 
-//
-// PUTs
 router.put("/:id", auth, async (req, res) => {
 	//! Might be a problem here with the 'teacher' property not set
 	// If invalid, return 400 - Bad request
@@ -155,8 +153,6 @@ router.put("/quit/:id", auth, async (req, res) => {
 	session.endSession();
 });
 
-//
-// DELETEs
 router.delete("/:id", [auth, teacher], async (req, res) => {
 	/* Starting a transaction to update the user's 'classrooms' prop 
 	and the classroom's 'participants' prop */
@@ -198,6 +194,91 @@ router.delete("/:id", [auth, teacher], async (req, res) => {
 	});
 
 	session.endSession();
+});
+
+//£ POSTS
+
+// Create
+router.post("/:id/posts", auth, async (req, res) => {
+	// Getting classroom by ID
+	const classroom = await Classroom.findById(req.params.id);
+	if (!classroom)
+		return res.status(400).send("No classroom with the given ID.");
+
+	// Input validation
+	const postToCreate = { author: req.user._id, ...req.body };
+	const { error } = validatePost(postToCreate);
+	if (error)
+		return res.status(400).send(error.details.map(({ message }) => message));
+
+	// Pushing post to classroom post list
+	const post = new Post(postToCreate);
+	classroom.posts.push(post);
+	classroom.save();
+
+	// Return OK
+	res.send(post);
+});
+
+// Update
+router.put("/:id/posts/:postId", auth, async (req, res) => {
+	// Input validation
+	const update = { author: req.user._id, ...req.body };
+	const { error } = validatePost(update);
+	if (error)
+		return res.status(400).send(error.details.map(({ message }) => message));
+
+	const result = await Classroom.updateOne(
+		{ _id: req.params.id, "posts._id": req.params.postId },
+		{ $set: { "posts.$": update } }
+	);
+	if (!result)
+		return res
+			.status(400)
+			.send(`No post found with the ID '${req.params.postId}'.`);
+
+	res.send(result);
+});
+
+// Delete
+router.delete("/:id/posts/:postId", auth, async (req, res) => {
+	// Deleting post
+	const result = await Classroom.deleteOne({
+		_id: req.params.id,
+		"posts._id": req.params.postId,
+	});
+	if (!result)
+		return res
+			.status(400)
+			.send(`No post found with the ID '${req.params.postId}'.`);
+
+	// Return OK
+	res.send(result);
+});
+
+//£ COMMENT
+
+// Comment
+router.post("/:id/posts/:postId/comments", auth, async (req, res) => {
+	// Input validation
+	const commentToAdd = { author: req.user._id, ...req.body };
+	const { error } = validatePost(commentToAdd);
+	if (error)
+		return res.status(400).send(error.details.map(({ message }) => message));
+
+	// Adding comment
+	const comment = new Comment(commentToAdd);
+	const result = await Classroom.updateOne(
+		{ _id: req.params.id, "posts._id": req.params.postId },
+		{ $push: { "posts.$.comments": comment } }
+	);
+	if (!result)
+		return res
+			.status(400)
+			.send(`No post found with the ID '${req.params.postId}'.`);
+
+	// Return OK
+	res.send(result);
 });
 
 module.exports = router;
