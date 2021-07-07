@@ -1,7 +1,6 @@
 const express = require("express");
 const auth = require("../middleware/auth"); // Protecting the routes
 const teacher = require("../middleware/teacher");
-const debug = require("debug")("ns:routes::classrooms");
 const router = express.Router();
 const { Classroom, validate } = require("../models/Classroom");
 const { Post, validate: validatePost } = require("../models/Post");
@@ -53,29 +52,13 @@ const formatFile = (file) => {
 
 //£ CLASSROOMS
 
-router.get("/", auth, async (req, res, next) => {
-	try {
-		const classrooms = await Classroom.find({});
-		res.send(classrooms);
-	} catch (exception) {
-		next(exception);
-	}
+router.get("/", auth, async (req, res) => {
+	const classrooms = await Classroom.find({});
+	res.send(classrooms);
 });
 router.get("/:id", auth, async (req, res) => {
-	try {
-		const classroom = await Classroom.findById(req.params.id);
-
-		debug("A Classroom has been retrieved: " + JSON.stringify(classroom));
-
-		res.send(classroom);
-	} catch (exception) {
-		for (field in exception.errors) {
-			debug(exception.errors[field].message, "\n");
-		}
-		return res
-			.status(404)
-			.send(`No existing classroom with the given ID '${req.params.id}'`);
-	}
+	const classroom = await Classroom.findById(req.params.id);
+	res.send(classroom);
 });
 
 router.post("/", [auth, teacher], async (req, res) => {
@@ -130,24 +113,15 @@ router.put("/:id", auth, async (req, res) => {
 		return res.status(400).send(error.details.map(({ message }) => message));
 
 	// Else, try to update
-	try {
-		const classroom = await Classroom.findByIdAndUpdate(
-			req.params.id,
-			{
-				$set: req.body,
-			},
-			{ new: true }
-		);
+	const classroom = await Classroom.findByIdAndUpdate(
+		req.params.id,
+		{
+			$set: req.body,
+		},
+		{ new: true }
+	);
 
-		res.send(classroom);
-	} catch (exception) {
-		for (field in exception.errors) {
-			debug(exception.errors[field], "\n");
-		}
-		return res
-			.status(404)
-			.send(`No existing classroom with the given ID '${req.params.id}'`);
-	}
+	res.send(classroom);
 });
 router.put("/quit/:id", auth, async (req, res) => {
 	/* Starting a transaction to update the user's 'classrooms' prop 
@@ -231,7 +205,6 @@ router.delete("/:id", [auth, teacher], async (req, res) => {
 				res.send({ deleted: classroom, usersUpdated: usersUpdated })
 			);
 		} catch (ex) {
-			debug(ex);
 			return Promise.reject(
 				res
 					.status(500)

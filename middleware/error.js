@@ -1,9 +1,13 @@
-const debug = require("debug")("ns:mdlw::errs");
+const winston = require("winston");
 
 module.exports = function (err, req, res, next) {
 	/* This is how all promise rejections of our routes 
        will be handled */
-	debug(err);
-	res.status(500).send("Something failed.");
-	next();
+
+	// Saving logs in the App log file
+	winston.error(err.message, err);
+
+	res
+		.status(500)
+		.send("An internal error occured while executing the request.");
 };

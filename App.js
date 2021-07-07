@@ -1,12 +1,34 @@
 require("express-async-errors");
+require("winston-mongodb");
 const express = require("express"); // Server
 const config = require("config"); // Configuration
 const helmet = require("helmet"); // Security
 const morgan = require("morgan"); // Logging
 const debug = require("debug")("ns:startup"); // Debugging startup
 const logger = require("./middleware/logger"); // Custom middleware
+const winston = require("winston"); // Logger
 const error = require("./middleware/error");
 const connectToMongoDb = require("./database/mongo"); // Database
+
+/* UNHANDLED ERRORS */
+/* Errors occuring outside the scope of express.js */
+process.on("uncaughtException", (ex) => {
+	winston.error(ex.message, ex);
+	process.exit(1);
+});
+process.on("unhandledRejection", (ex) => {
+	winston.error(ex.message, ex);
+	process.exit(1);
+});
+
+/* LOGGER CONFIGURATION  */
+winston.add(new winston.transports.File({ filename: "nslog.log" })); // Save logs to file
+winston.add(
+	new winston.transports.MongoDB({
+		db: "mongodb://localhost/nettdb",
+		options: { useUnifiedTopology: true },
+	})
+); // Save logs to MongoDB
 
 /* ENVIRONMENT VARIABLES */
 if (
