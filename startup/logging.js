@@ -8,7 +8,7 @@ module.exports = function () {
 	// Errors outside express.js scope
 	winston.exceptions.handle(
 		new winston.transports.File({
-			filename: "nsexcepts.log",
+			filename: "logs/nsexcepts.log",
 			handleExceptions: true,
 		})
 	);
@@ -18,7 +18,7 @@ module.exports = function () {
 	//// });
 
 	// Errors within express.js scope
-	winston.add(new winston.transports.File({ filename: "nslog.log" })); // Save logs to file
+	winston.add(new winston.transports.File({ filename: "logs/nslog.log" })); // Save logs to file
 	winston.add(
 		new winston.transports.MongoDB({
 			db: "mongodb://localhost/nettdb",
