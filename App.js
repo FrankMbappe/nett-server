@@ -1,9 +1,11 @@
+require("express-async-errors");
 const express = require("express"); // Server
 const config = require("config"); // Configuration
 const helmet = require("helmet"); // Security
 const morgan = require("morgan"); // Logging
 const debug = require("debug")("ns:startup"); // Debugging startup
 const logger = require("./middleware/logger"); // Custom middleware
+const error = require("./middleware/error");
 const connectToMongoDb = require("./database/mongo"); // Database
 
 /* ENVIRONMENT VARIABLES */
@@ -48,6 +50,9 @@ app.use("/api/checks", checks);
 app.use("/api/classrooms", classrooms);
 app.use("/api/countries", countries);
 app.use("/api/users", users);
+
+/* Handling routes errors */
+app.use(error);
 
 /* If we are in development mode, Morgan is enabled */
 if (app.get("env") === "development") {

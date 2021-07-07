@@ -11,7 +11,7 @@ async function connectToMongoDb() {
 		});
 		debug("Successfully connected to the database...");
 	} catch (error) {
-		debug(error);
+		debug("Could not connect to MongoDB...");
 	}
 }
 

@@ -53,9 +53,13 @@ const formatFile = (file) => {
 
 //£ CLASSROOMS
 
-router.get("/", auth, async (req, res) => {
-	const classrooms = await Classroom.find({});
-	res.send(classrooms);
+router.get("/", auth, async (req, res, next) => {
+	try {
+		const classrooms = await Classroom.find({});
+		res.send(classrooms);
+	} catch (exception) {
+		next(exception);
+	}
 });
 router.get("/:id", auth, async (req, res) => {
 	try {
