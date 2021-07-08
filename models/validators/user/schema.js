@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { refs, userTypes, userGenders } = require("../../../config/nett");
+const { userProfileSchema } = require("../userProfile");
 
 //* PROPERTIES
 //@ Basic user properties
@@ -19,45 +20,7 @@ const basicProps = {
 		trim: true,
 	},
 	classrooms: [{ type: mongoose.Types.ObjectId, ref: refs.classroom }],
-	profile: {
-		type: {
-			nomination: {
-				type: String,
-				enum: ["Dr", "Mr", "Mrs", "Miss"],
-				lowercase: true,
-			},
-			firstName: {
-				type: String,
-				required: true,
-				minlength: 1,
-				maxlength: 255,
-				lowercase: true,
-				trim: true,
-			},
-			lastName: {
-				type: String,
-				required: true,
-				minlength: 1,
-				maxlength: 255,
-				lowercase: true,
-				trim: true,
-			},
-			birthDate: Date,
-			email: { type: String, unique: true },
-			gender: {
-				type: String,
-				required: true,
-				enum: Object.values(userGenders),
-				lowercase: true,
-			},
-			picUri: String,
-		},
-		pocket: {
-			posts: [{ type: mongoose.Types.ObjectId, ref: refs.post }],
-			// TODO: notes: [],
-		},
-		required: false,
-	},
+	profile: userProfileSchema,
 };
 //@ Student
 const studentProps = {

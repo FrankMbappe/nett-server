@@ -53,11 +53,11 @@ const formatFile = (file) => {
 //£ CLASSROOMS
 
 router.get("/", auth, async (req, res) => {
-	const classrooms = await Classroom.find({});
+	const classrooms = await Classroom.find({}).populate("teacher");
 	res.send(classrooms);
 });
 router.get("/:id", auth, async (req, res) => {
-	const classroom = await Classroom.findById(req.params.id);
+	const classroom = await Classroom.findById(req.params.id).populate();
 	res.send(classroom);
 });
 

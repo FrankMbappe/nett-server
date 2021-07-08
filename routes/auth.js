@@ -31,7 +31,6 @@ router.post("/", async (req, res) => {
 router.post("/confirm", async (req, res) => {
 	// Input validation
 	const { error } = validate(req.body);
-
 	if (error) return res.status(400).send(error.details[0].message);
 
 	/* We proceed to phone number confirmation */
@@ -39,6 +38,7 @@ router.post("/confirm", async (req, res) => {
 		.services(config.get("twilioServiceId"))
 		.verificationChecks.create({ to: req.body.phone, code: req.body.code })
 		.then(async ({ dateCreated, status, to }) => {
+			/* We define the shape of the response */
 			const twilioRes = {
 				createdOn: dateCreated.toDateString(),
 				isApproved: status === "approved",

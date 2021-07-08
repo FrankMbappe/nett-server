@@ -18,6 +18,14 @@ const userGenders = {
 	male: "male",
 	other: "other",
 };
+const userHonorifics = {
+	dr: "Dr.",
+	professor: "Professor",
+	mr: "Mr.",
+	mrs: "Mrs.",
+	miss: "Miss",
+	ms: "Ms.",
+};
 
 /* POST CONFIGS */
 const postTypes = {
@@ -37,8 +45,9 @@ const MAX_FILE_SIZE = 1e8;
 module.exports = {
 	refs,
 	userTypes,
+	userGenders,
+	userHonorifics,
 	postTypes,
 	eventStatuses,
-	userGenders,
 	MAX_FILE_SIZE,
 };

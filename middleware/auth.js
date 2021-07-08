@@ -1,4 +1,4 @@
-const debug = require("debug")("ns:mdlw");
+const debug = require("debug")("ns:middleware");
 const jwt = require("jsonwebtoken"); // Auth token
 const config = require("config"); // App config
 

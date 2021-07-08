@@ -1,5 +1,6 @@
 const Joi = require("joi");
-const { userTypes, userGenders } = require("../../../config/nett");
+const { userTypes } = require("../../../config/nett");
+const { userProfileValidator } = require("../userProfile");
 
 const user = Joi.object({
 	_type: Joi.string()
@@ -7,16 +8,9 @@ const user = Joi.object({
 		.required(),
 	phone: Joi.string().min(5).max(255).required(),
 	classrooms: Joi.array().items(Joi.objectId().required()),
-	profile: Joi.object({
-		nomination: Joi.string().max(25),
-		firstName: Joi.string().min(3).max(255).required(),
-		lastName: Joi.string().min(3).max(255).required(),
-		birthDate: Joi.date().less("now"),
-		email: Joi.string().email(),
-		gender: Joi.string().valid(...Object.values(userGenders)),
-		picUri: Joi.string().uri(),
-	}),
+	profile: userProfileValidator,
 
+	// Student
 	studentProps: Joi.object({
 		field: Joi.string().min(3).max(255).required(),
 	}).when("_type", {
@@ -24,6 +18,7 @@ const user = Joi.object({
 		then: Joi.required(),
 	}),
 
+	// Consultant
 	consultantProps: Joi.object({
 		company: Joi.string(),
 		proPhone: Joi.string().max(255),
@@ -36,6 +31,7 @@ const user = Joi.object({
 		then: Joi.required(),
 	}),
 
+	// Teacher
 	teacherProps: Joi.object({
 		lectures: Joi.array().required(),
 	}).when("_type", {

@@ -1,4 +1,4 @@
-const debug = require("debug")("ns:mdlw"); // Debugging startup
+const debug = require("debug")("ns:middleware"); // Debugging startup
 
 function log(req, res, next) {
 	debug("Logging...");
