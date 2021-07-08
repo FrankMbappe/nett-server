@@ -1,16 +1,43 @@
-const { isBefore } = require("date-fns");
 const mongoose = require("mongoose");
-const { refs } = require("../../config/nett");
-const { qaSchema, answerSchema } = require("./qa");
+const Joi = require("joi");
+const { isBefore } = require("date-fns");
+const { refs, eventStatuses } = require("../../config/nett");
+const {
+	qaSchema,
+	answerSchema,
+	qaValidator,
+	answerValidator,
+} = require("./qa");
 
-const sessionSchema = new mongoose.Schema({
-	isCorrect: { type: Boolean, required: true },
+// Joi
+const quizSessionValidator = Joi.object({
+	isCorrect: Joi.boolean().required(),
+	submittedAnswers: Joi.array().items(answerValidator),
+	remainingTime: Joi.number(),
+});
+const quizParticipationValidator = Joi.object({
+	author: Joi.objectId().required(),
+	quizSessions: Joi.array().items(quizSessionValidator),
+});
+const quizValidator = Joi.object({
+	title: Joi.string().min(3).max(255).required(),
+	status: Joi.string().valid(...Object.values(eventStatuses)),
+	dateOpening: Joi.date().less(Joi.ref("dateClosing")),
+	dateClosing: Joi.date(),
+	qas: Joi.array().items(qaValidator).required(),
+	participations: Joi.array().items(quizParticipationValidator),
+	isDeterministic: Joi.boolean(),
+});
+
+// Mongoose
+const quizSessionSchema = new mongoose.Schema({
+	isCorrect: { type: Boolean, required: true, default: false },
 	submittedAnswers: { type: [answerSchema], default: [] },
 	remainingTime: Number,
 });
 const quizParticipationSchema = new mongoose.Schema({
 	author: { type: mongoose.Types.ObjectId, ref: refs.user },
-	sessions: { type: [sessionSchema], default: [] },
+	quizSessions: { type: [quizSessionSchema], default: [] },
 });
 const quizSchema = new mongoose.Schema({
 	creationDate: { type: Date, default: Date.now },
@@ -29,4 +56,11 @@ const quizSchema = new mongoose.Schema({
 	isDeterministic: { type: Boolean, default: false },
 });
 
-module.exports = quizSchema;
+module.exports = {
+	quizSchema,
+	quizParticipationSchema,
+	quizSessionSchema,
+	quizValidator,
+	quizParticipationValidator,
+	quizSessionValidator,
+};

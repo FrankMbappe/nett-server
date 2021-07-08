@@ -1,12 +1,23 @@
 const mongoose = require("mongoose");
-const postSchema = require("./post");
-const tutorialStep = require("./tutorialSteps");
+const Joi = require("joi");
+const { postSchema, postValidator } = require("./post");
+const { tutorialStepSchema, tutorialStepValidator } = require("./tutorialStep");
 
+// Joi
+// Inheriting from Joi postValidator schema as a tutorial is a kind of post.
+const tutorialValidator = postValidator.keys({
+	title: Joi.string().min(3).max(255).required(),
+	description: Joi.string().min(3).max(255),
+	steps: Joi.array().items(tutorialStepValidator).min(2),
+});
+
+// Mongoose
+// Inheriting from Mongoose postSchema as well.
 const tutorialSchema = new mongoose.Schema({
 	...postSchema.obj,
 	title: { type: String, minlength: 3, maxlength: 255, required: true },
 	description: { type: String, maxlength: 255 },
-	steps: { type: [tutorialStep], required: true },
+	steps: { type: [tutorialStepSchema], required: true },
 });
 
-module.exports = tutorialSchema;
+module.exports = { tutorialSchema, tutorialValidator };
