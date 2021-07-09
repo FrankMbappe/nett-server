@@ -36,7 +36,7 @@ const userProfileSchema = new mongoose.Schema({
 		trim: true,
 	},
 	birthDate: Date,
-	email: { type: String, unique: true },
+	email: { type: String },
 	gender: {
 		type: String,
 		enum: Object.values(userGenders),

@@ -9,6 +9,37 @@ const {
 } = require("../models/UserProfile"); // Validating input
 
 //
+// FILE STORAGE
+const { MAX_FILE_SIZE } = require("../config/nett");
+const path = require("path");
+const multer = require("multer");
+const { startsWith } = require("lodash");
+const fileStorage = multer.diskStorage({
+	destination: function (req, file, cb) {
+		return cb(null, "uploads/images/");
+	},
+	filename: function (req, file, cb) {
+		const fileName =
+			"profile_" +
+			req.user._id +
+			"_" +
+			new Date().getTime() +
+			path.extname(file.originalname);
+		cb(null, fileName);
+	},
+});
+const fileFilter = (req, file, cb) => {
+	// If the file uploaded is an image, accept.
+	if (startsWith(file.mimetype, "image")) cb(null, true);
+	else cb(null, false); // Otherwise, reject.
+};
+const upload = multer({
+	storage: fileStorage,
+	limits: { fileSize: MAX_FILE_SIZE },
+	fileFilter: fileFilter,
+});
+
+//
 // GETs
 router.get("/", async (_, res) => {
 	const users = await User.find().sort("creationDate");
@@ -58,18 +89,27 @@ router.post("/", async (req, res) => {
 		res.header("x-auth-token", token).send(user);
 	});
 });
-router.post("/me/profile", auth, async (req, res) => {
-	const user = await User.findById(req.user._id);
+router.post(
+	"/me/profile",
+	[auth, upload.single("picUri")],
+	async (req, res) => {
+		const user = await User.findById(req.user._id);
 
-	// If invalid, return 400 - Bad request
-	const { error } = validateProfile(req.body);
-	if (error) return res.status(400).send(error.details[0].message);
+		// Checking if the profile includes a picture
+		let picUri = null;
+		if (req.file) picUri = req.file.path;
 
-	user.profile = new UserProfile(req.body);
-	user.save();
+		// If invalid, return 400 - Bad request
+		const profileToSet = { ...req.body, picUri };
+		const { error } = validateProfile(profileToSet);
+		if (error) return res.status(400).send(error.details[0].message);
 
-	res.send(user);
-});
+		user.profile = new UserProfile(profileToSet);
+		user.save();
+
+		res.send(user);
+	}
+);
 
 //
 // PUTs

@@ -1,3 +1,9 @@
+{"stringValue":"\"undefined\"","kind":"ObjectId","value":"undefined","path":"_id","reason":{},"valueType":"string","level":"error","message":"Cast to ObjectId failed for value \"undefined\" (type string) at path \"_id\" for model \"Classroom\" Cast to ObjectId failed for value \"undefined\" (type string) at path \"_id\" for model \"Classroom\"","stack":"CastError: Cast to ObjectId failed for value \"undefined\" (type string) at path \"_id\" for model \"Classroom\"\n    at model.Query.exec (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\mongoose\\lib\\query.js:4498:21)\n    at model.Query.Query.then (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\mongoose\\lib\\query.js:4592:15)\n    at processTicksAndRejections (node:internal/process/task_queues:93:5)"}
+{"message":"Nett-Server is listening port 3000...","level":"info"}
+{"level":"info","message":"Successfully connected to the database..."}
+{"message":"Nett-Server is listening port 3000...","level":"info"}
+{"level":"info","message":"Successfully connected to the database..."}
+{"level":"info","message":"Successfully connected to the database..."}
 {"message":"Nett-Server is listening port 3000...","level":"info"}
 {"level":"info","message":"Successfully connected to the database..."}
 {"message":"Nett-Server is listening port 3000...","level":"info"}
@@ -6,11 +12,4 @@
 {"level":"info","message":"Successfully connected to the database..."}
 {"message":"Nett-Server is listening port 3000...","level":"info"}
 {"level":"info","message":"Successfully connected to the database..."}
-{"message":"Nett-Server is listening port 3000...","level":"info"}
-{"level":"info","message":"Successfully connected to the database..."}
-{"level":"info","message":"Successfully connected to the database..."}
-{"level":"info","message":"Successfully connected to the database..."}
-{"message":"Nett-Server is listening port 3000...","level":"info"}
-{"level":"info","message":"Successfully connected to the database..."}
-{"message":"Nett-Server is listening port 3000...","level":"info"}
-{"level":"info","message":"Successfully connected to the database..."}
+{"name":"MulterError","message":"Unexpected field Unexpected field","code":"LIMIT_UNEXPECTED_FILE","field":"pic","storageErrors":[],"level":"error","stack":"MulterError: Unexpected field\n    at wrappedFileFilter (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\multer\\index.js:40:19)\n    at Busboy.<anonymous> (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\multer\\lib\\make-middleware.js:114:7)\n    at Busboy.emit (node:events:376:20)\n    at Busboy.emit (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\busboy\\lib\\main.js:38:33)\n    at PartStream.<anonymous> (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\busboy\\lib\\types\\multipart.js:213:13)\n    at PartStream.emit (node:events:376:20)\n    at HeaderParser.<anonymous> (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\dicer\\lib\\Dicer.js:51:16)\n    at HeaderParser.emit (node:events:376:20)\n    at HeaderParser._finish (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\dicer\\lib\\HeaderParser.js:68:8)\n    at SBMH.<anonymous> (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\dicer\\lib\\HeaderParser.js:40:12)\n    at SBMH.emit (node:events:376:20)\n    at SBMH._sbmh_feed (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\streamsearch\\lib\\sbmh.js:95:16)\n    at SBMH.push (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\streamsearch\\lib\\sbmh.js:56:14)\n    at HeaderParser.push (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\dicer\\lib\\HeaderParser.js:46:19)\n    at Dicer._oninfo (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\dicer\\lib\\Dicer.js:197:25)\n    at SBMH.<anonymous> (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\dicer\\lib\\Dicer.js:127:10)"}

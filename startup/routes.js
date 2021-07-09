@@ -13,6 +13,7 @@ const users = require("../routes/users");
 module.exports = function (app) {
 	/* MIDDLEWARE */
 	app.use(express.json());
+	app.use(express.urlencoded({ extended: true }));
 	app.use(helmet());
 	app.use(logger);
 	app.use("/uploads", express.static("uploads")); // Making 'uploads' folder public
