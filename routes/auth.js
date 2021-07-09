@@ -13,30 +13,29 @@ const client = require("twilio")(
 );
 
 // Phone number verification
-router.post("/", async (req, res) => {
+router.get("/", async (req, res) => {
 	// Input validation
-	const { error } = validate(req.body);
-
+	const { error } = validate(req.query);
 	if (error) return res.status(400).send(error.details[0].message);
 
 	/* We proceed to phone number verification */
 	await client.verify
 		.services(config.get("twilioServiceId"))
-		.verifications.create({ to: req.body.phone, channel: "sms" })
-		.then((verification) => res.send(verification))
+		.verifications.create({ to: req.query.phone, channel: "sms" })
+		.then(({ to, channel, status }) => res.send({ to, channel, status }))
 		.catch((err) => res.status(400).send(err));
 });
 
 // Phone number confirmation
-router.post("/confirm", async (req, res) => {
+router.get("/confirm", async (req, res) => {
 	// Input validation
-	const { error } = validate(req.body);
+	const { error } = validate(req.query);
 	if (error) return res.status(400).send(error.details[0].message);
 
 	/* We proceed to phone number confirmation */
 	await client.verify
 		.services(config.get("twilioServiceId"))
-		.verificationChecks.create({ to: req.body.phone, code: req.body.code })
+		.verificationChecks.create({ to: req.query.phone, code: req.query.code })
 		.then(async ({ dateCreated, status, to }) => {
 			/* We define the shape of the response */
 			const twilioRes = {
