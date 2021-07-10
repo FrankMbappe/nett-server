@@ -2,10 +2,12 @@ const Joi = require("joi");
 const { userTypes } = require("../../../config/nett");
 const { userProfileValidator } = require("../userProfile");
 
-const user = Joi.object({
-	_type: Joi.string()
-		.valid(...Object.values(userTypes))
-		.required(),
+const userTypeValidator = Joi.string()
+	.valid(...Object.values(userTypes))
+	.required();
+
+const userValidator = Joi.object({
+	_type: userTypeValidator,
 	phone: Joi.string().min(5).max(255).required(),
 	classrooms: Joi.array().items(Joi.objectId().required()),
 	profile: userProfileValidator,
@@ -40,4 +42,4 @@ const user = Joi.object({
 	}),
 });
 
-module.exports = user;
+module.exports = { userValidator, userTypeValidator };

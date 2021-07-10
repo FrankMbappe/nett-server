@@ -1,4 +1,4 @@
-const userValidator = require("./validator");
+const { userValidator, userTypeValidator } = require("./validator");
 const userSchema = require("./schema");
 
-module.exports = { userValidator, userSchema };
+module.exports = { userValidator, userTypeValidator, userSchema };

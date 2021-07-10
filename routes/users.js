@@ -2,7 +2,7 @@ const express = require("express"); // Server
 const auth = require("../middleware/auth"); // Protecting the routes
 const debug = require("debug")("ns:routes::users"); // Debugger
 const router = express.Router(); // Instead of creating a new server
-const { User, validate } = require("../models/User"); // Validating input
+const { User, validate, validateUserType } = require("../models/User"); // Validating input
 const {
 	UserProfile,
 	validate: validateProfile,
@@ -10,7 +10,7 @@ const {
 
 //
 // FILE STORAGE
-const { MAX_FILE_SIZE } = require("../config/nett");
+const { MAX_FILE_SIZE, userTypes } = require("../config/nett");
 const path = require("path");
 const multer = require("multer");
 const { startsWith } = require("lodash");
@@ -64,31 +64,6 @@ router.get("/me", auth, async (req, res) => {
 
 //
 // POSTs
-router.post("/", async (req, res) => {
-	// Input validation
-	const { error } = validate(req.body);
-
-	if (error) return res.status(400).send(error.details[0].message);
-
-	const user = await User.findOne({ phone: req.body.phone });
-	if (user)
-		return res
-			.status(400)
-			.send(`User with the phone number '${req.body.phone}' already exists.`);
-
-	// Saving the user
-	User.create(req.body, (err, user) => {
-		if (err) return res.status(500).send(err.message);
-
-		debug(`A User has been added: ${user}`);
-
-		// The auth token is generated
-		const token = user.generateAuthToken();
-
-		// And sent to the client
-		res.header("x-auth-token", token).send(user);
-	});
-});
 router.post(
 	"/me/profile",
 	[auth, upload.single("picUri")],
@@ -113,29 +88,36 @@ router.post(
 
 //
 // PUTs
-router.put("/:id", async (req, res) => {
-	// If invalid, return 400 - Bad request
+router.put("/", auth, async (req, res) => {
+	// If data is invalid, return 400 - Bad request
 	const { error } = validate(req.body);
-
 	if (error) return res.status(400).send(error.details[0].message);
 
-	// Else, try to update
-	const user = await User.findById(req.params.id);
-
-	if (!user)
-		return res
-			.status(400)
-			.send(`No existing user with the ID '${req.params.id}'.`);
-
-	// Updating the user here
+	// Otherwise, update
 	User.findByIdAndUpdate(
-		req.params.id,
+		req.user._id,
 		{ $set: req.body },
 		{ new: true },
 		(err, user, _) => {
 			if (err) return res.status(500).send(err.message);
 
-			debug(`A User has been updated: ${user}`);
+			res.send(user);
+		}
+	);
+});
+router.put("/type", auth, async (req, res) => {
+	// Validating the type input
+	const { error } = validateUserType(req.query._type);
+	if (error) return res.status(400).send(error.details[0].message);
+
+	// Updating the user here
+	User.findByIdAndUpdate(
+		req.user._id,
+		{ $set: { _type: req.query._type } },
+		{ new: true },
+		(err, user, _) => {
+			if (err) return res.status(500).send(err.message);
+
 			res.send(user);
 		}
 	);
@@ -143,9 +125,8 @@ router.put("/:id", async (req, res) => {
 
 //
 // DELETEs
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
 	const user = await User.findById(req.params.id);
-
 	if (!user)
 		return res
 			.status(400)
@@ -155,7 +136,6 @@ router.delete("/:id", async (req, res) => {
 	User.findByIdAndDelete(req.params.id, (err, user, _) => {
 		if (err) return res.status(500).send(err.message);
 
-		debug(`A User has been deleted: ${user}`);
 		res.send(user);
 	});
 });
