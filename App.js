@@ -10,6 +10,6 @@ require("./startup/validation")(); // Setting up validation properties
 require("./startup/routes")(app); // Setting up routes and middleware
 require("./startup/hello")(app); // Finally, saying hello.
 
-app.listen(port, "192.168.8.100", () =>
+app.listen(port, "192.168.8.101", () =>
 	winston.info(`Nett-Server is listening port ${port}...`)
 );

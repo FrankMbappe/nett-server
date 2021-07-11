@@ -5,7 +5,7 @@ const { MAX_FILE_SIZE } = require("../../config/nett");
 // Joi
 const fileValidator = Joi.object({
 	mimetype: Joi.string().required(),
-	uri: Joi.string().uri().required(),
+	uri: Joi.string().required(),
 	name: Joi.string().min(3).max(255).required(),
 	size: Joi.number().positive().max(MAX_FILE_SIZE).required(),
 	extension: Joi.string().required(),

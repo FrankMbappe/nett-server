@@ -12,12 +12,15 @@ const postValidator = Joi.object({
 	_type: Joi.string()
 		.valid(...Object.values(postTypes))
 		.required(),
-	text: Joi.string().min(3).max(500),
+	text: Joi.string().max(3000).when("file", {
+		is: null,
+		then: Joi.string().required(),
+	}),
 	likes: Joi.array().items(likeValidator),
 	comments: Joi.array().items(commentValidator),
-	file: Joi.object(),
+	file: fileValidator,
 	topics: Joi.array().items(topicValidator),
-	haveSeen: Joi.array().items(Joi.objectId().required()),
+	haveSeen: Joi.array().items(Joi.objectId()),
 });
 
 // Mongoose
@@ -29,7 +32,7 @@ const postSchema = new mongoose.Schema({
 		enum: Object.values(postTypes),
 		default: postTypes.normal,
 	},
-	text: { type: String, minlength: 5, maxlength: 500 },
+	text: { type: String, maxlength: 3000 },
 	likes: { type: [likeSchema], default: [] },
 	comments: { type: [commentSchema], default: [] },
 	file: fileSchema,

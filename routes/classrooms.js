@@ -259,7 +259,7 @@ router.post(postEndpoint, [auth, upload.single("_file")], async (req, res) => {
 
 	// Checking if the post includes a file
 	let file = null;
-	if (req.file) file = new File(formatFile(req.file));
+	if (req.file) file = formatFile(req.file);
 
 	// Then validating post input
 	const postToCreate = {
@@ -267,14 +267,19 @@ router.post(postEndpoint, [auth, upload.single("_file")], async (req, res) => {
 		file: file,
 		...req.body,
 	};
+	console.log(postToCreate);
 	const { error } = validatePost(postToCreate);
-	if (error)
+	if (error) {
+		console.log(error);
 		return res.status(400).send(error.details.map(({ message }) => message));
+	}
 
 	// Pushing post to classroom post list
 	const post = new Post(postToCreate);
 	classroom.posts.push(post);
 	classroom.save();
+
+	console.log("It's ok");
 
 	// Return OK
 	res.send(post);
