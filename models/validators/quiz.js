@@ -1,13 +1,14 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
 const { isBefore } = require("date-fns");
-const { refs, eventStatuses } = require("../../config/nett");
+const { refs } = require("../../config/nett");
 const {
 	qaSchema,
 	answerSchema,
 	qaValidator,
 	answerValidator,
 } = require("./qa");
+const { postSchema, postValidator } = require("./post");
 
 // Joi
 const quizSessionValidator = Joi.object({
@@ -19,14 +20,15 @@ const quizParticipationValidator = Joi.object({
 	author: Joi.objectId().required(),
 	quizSessions: Joi.array().items(quizSessionValidator),
 });
-const quizValidator = Joi.object({
+const quizValidator = postValidator.keys({
 	title: Joi.string().min(3).max(255).required(),
-	status: Joi.string().valid(...Object.values(eventStatuses)),
+	description: Joi.string().max(1000),
+	hasTimeInterval: Joi.boolean().required(),
 	dateOpening: Joi.date().less(Joi.ref("dateClosing")),
 	dateClosing: Joi.date(),
 	qas: Joi.array().items(qaValidator).required(),
 	participations: Joi.array().items(quizParticipationValidator),
-	isDeterministic: Joi.boolean(),
+	isDeterministic: Joi.boolean().required(),
 });
 
 // Mongoose
@@ -40,8 +42,10 @@ const quizParticipationSchema = new mongoose.Schema({
 	quizSessions: { type: [quizSessionSchema], default: [] },
 });
 const quizSchema = new mongoose.Schema({
-	creationDate: { type: Date, default: Date.now },
+	...postSchema.obj,
 	title: { type: String, minlength: 3, maxlength: 255, required: true },
+	description: { type: String, minlength: 1, maxlength: 1000 },
+	hasTimeInterval: { type: Boolean, required: true },
 	dateOpening: Date,
 	dateClosing: {
 		type: Date,

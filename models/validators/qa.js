@@ -8,8 +8,8 @@ const answerValidator = Joi.object({
 });
 const qaValidator = Joi.object({
 	position: Joi.number().positive().required(),
-	topic: Joi.string().min(3).max(255),
-	question: Joi.string().min(3).max(255).required(),
+	topic: Joi.string().max(255),
+	question: Joi.string().min(1).max(255).required(),
 	answers: Joi.array().items(answerValidator).min(2).required(),
 	rightAnswers: Joi.array().items(Joi.number().positive()).min(2).required(),
 	timer: Joi.number().min(10),

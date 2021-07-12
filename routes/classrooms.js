@@ -4,8 +4,8 @@ const teacher = require("../middleware/teacher");
 const router = express.Router();
 const { Classroom, validate } = require("../models/Classroom");
 const { Post, validate: validatePost } = require("../models/Post");
+const { Quiz, validate: validateQuiz } = require("../models/Quiz");
 const { Comment, validate: validateComment } = require("../models/Comment");
-const { File } = require("../models/File");
 const { User } = require("../models/User");
 
 //£ Saving file in the server
@@ -18,7 +18,7 @@ const fileStorage = multer.diskStorage({
 		const base = "uploads";
 		if (/^image.*$/.test(file.mimetype)) return cb(null, base + "/images/");
 		if (/^video.*$/.test(file.mimetype)) return cb(null, base + "/videos/");
-		cb(null, base);
+		cb(null, base + "/documents/");
 	},
 	filename: function (req, file, cb) {
 		const fileName =
@@ -29,15 +29,9 @@ const fileStorage = multer.diskStorage({
 		cb(null, fileName);
 	},
 });
-const fileFilter = (req, file, cb) => {
-	// If the file uploaded is an image or a video, accept.
-	if (/^(image|video).*$/.test(file.mimetype)) cb(null, true);
-	else cb(null, false); // Otherwise, reject.
-};
 const upload = multer({
 	storage: fileStorage,
 	limits: { fileSize: MAX_FILE_SIZE },
-	fileFilter: fileFilter,
 });
 const formatFile = (file) => {
 	if (!file) return null;
@@ -53,12 +47,14 @@ const formatFile = (file) => {
 //£ CLASSROOMS
 
 router.get("/", auth, async (req, res) => {
-	const classrooms = await Classroom.find({}).populate("teacher posts.author");
+	const classrooms = await Classroom.find({}).populate(
+		"teacher posts.author posts.comments.author"
+	);
 	res.send(classrooms);
 });
 router.get("/:id", auth, async (req, res) => {
 	const classroom = await Classroom.findById(req.params.id).populate(
-		"teacher posts.author"
+		"teacher posts.author posts.comments.author"
 	);
 	res.send(classroom);
 });
@@ -225,7 +221,9 @@ const postEndpoint = "/:id/posts";
 // Get
 router.get(postEndpoint, async (req, res) => {
 	// Get post list from classroom
-	const { posts } = await Classroom.findById(req.params.id, { posts: 1 });
+	const { posts } = await Classroom.findById(req.params.id, {
+		posts: 1,
+	}).populate("posts.author posts.comments.author");
 	if (!posts)
 		return res
 			.status(400)
@@ -264,10 +262,9 @@ router.post(postEndpoint, [auth, upload.single("_file")], async (req, res) => {
 	// Then validating post input
 	const postToCreate = {
 		author: req.user._id,
-		file: file,
+		...(file && { file }),
 		...req.body,
 	};
-	console.log(postToCreate);
 	const { error } = validatePost(postToCreate);
 	if (error) {
 		console.log(error);
@@ -278,8 +275,6 @@ router.post(postEndpoint, [auth, upload.single("_file")], async (req, res) => {
 	const post = new Post(postToCreate);
 	classroom.posts.push(post);
 	classroom.save();
-
-	console.log("It's ok");
 
 	// Return OK
 	res.send(post);
@@ -322,6 +317,39 @@ router.delete(`${postEndpoint}/:postId`, auth, async (req, res) => {
 
 	// Return OK
 	res.send(result);
+});
+
+//£ QUIZZES
+
+const quizEndpoint = "/:id/quizzes";
+
+// Create
+router.post(quizEndpoint, auth, async (req, res) => {
+	// Getting classroom by ID
+	const classroom = await Classroom.findById(req.params.id);
+	if (!classroom)
+		return res
+			.status(400)
+			.send(`No classroom found with the given ID '${req.params.id}'.`);
+
+	// Then validating the input
+	const quizToCreate = {
+		author: req.user._id,
+		...req.query,
+	};
+	const { error } = validateQuiz(quizToCreate);
+	if (error) {
+		console.log(error);
+		return res.status(400).send(error.details.map(({ message }) => message));
+	}
+
+	// Pushing quiz to classroom post list
+	const quiz = new Quiz(quizToCreate);
+	classroom.posts.push(quiz);
+	classroom.save();
+
+	// Return OK
+	res.send(quiz);
 });
 
 //£ COMMENT
