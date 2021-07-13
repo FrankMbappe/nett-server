@@ -5,6 +5,7 @@ const router = express.Router();
 const { Classroom, validate } = require("../models/Classroom");
 const { Post, validate: validatePost } = require("../models/Post");
 const { Quiz, validate: validateQuiz } = require("../models/Quiz");
+const { Tutorial, validate: validateTutorial } = require("../models/Tutorial");
 const { Comment, validate: validateComment } = require("../models/Comment");
 const { User } = require("../models/User");
 
@@ -335,8 +336,10 @@ router.post(quizEndpoint, auth, async (req, res) => {
 	// Then validating the input
 	const quizToCreate = {
 		author: req.user._id,
-		...req.query,
+		...req.body,
 	};
+	console.log(req.body);
+
 	const { error } = validateQuiz(quizToCreate);
 	if (error) {
 		console.log(error);
@@ -345,12 +348,56 @@ router.post(quizEndpoint, auth, async (req, res) => {
 
 	// Pushing quiz to classroom post list
 	const quiz = new Quiz(quizToCreate);
-	classroom.posts.push(quiz);
-	classroom.save();
+	try {
+		classroom.posts.push(quiz);
+		classroom.save();
+	} catch (ex) {
+		return res
+			.status(500)
+			.send("Something went wrong while executing your request.");
+	}
 
 	// Return OK
 	res.send(quiz);
 });
+
+//£ TUTORIALS
+
+const tutorialEndpoint = "/:id/tutorials";
+
+// Create
+router.post(
+	tutorialEndpoint,
+	[auth, upload.array("steps[video]")],
+	async (req, res) => {
+		// Getting classroom by ID
+		const classroom = await Classroom.findById(req.params.id);
+		if (!classroom)
+			return res
+				.status(400)
+				.send(`No classroom found with the given ID '${req.params.id}'.`);
+
+		// Then validating the input
+		const tutorialToCreate = {
+			author: req.user._id,
+			...req.body,
+		};
+		console.log(tutorialToCreate);
+		const { error } = validateTutorial(tutorialToCreate);
+		if (error) {
+			console.log(error);
+			return res.status(400).send(error.details.map(({ message }) => message));
+		}
+
+		// Pushing quiz to classroom post list
+		const tutorial = new Tutorial(tutorialToCreate);
+		classroom.posts.push(tutorial);
+		classroom.save();
+
+		// Return OK
+		res.send(tutorial);
+	}
+);
 
 //£ COMMENT
 

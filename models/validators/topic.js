@@ -3,7 +3,7 @@ const Joi = require("joi");
 
 // Joi
 const topicValidator = Joi.object({
-	name: Joi.string().min(3).max(255).required(),
+	name: Joi.string().min(1).max(255).required(),
 });
 
 // Mongoose

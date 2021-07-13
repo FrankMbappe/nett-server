@@ -21,7 +21,8 @@ const quizParticipationValidator = Joi.object({
 	quizSessions: Joi.array().items(quizSessionValidator),
 });
 const quizValidator = postValidator.keys({
-	title: Joi.string().min(3).max(255).required(),
+	text: Joi.string().forbidden(),
+	title: Joi.string().min(1).max(255).required(),
 	description: Joi.string().max(1000),
 	hasTimeInterval: Joi.boolean().required(),
 	dateOpening: Joi.date().less(Joi.ref("dateClosing")),

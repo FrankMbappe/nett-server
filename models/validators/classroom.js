@@ -29,7 +29,6 @@ const classroomSchema = new mongoose.Schema({
 	},
 	description: {
 		type: String,
-		minlength: 3,
 		maxlength: 255,
 		trim: true,
 	},

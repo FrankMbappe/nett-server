@@ -6,7 +6,7 @@ const { likeValidator, likeSchema } = require("./like");
 // Joi
 const commentValidator = Joi.object({
 	author: Joi.objectId().required(),
-	text: Joi.string().min(3).max(500).required(),
+	text: Joi.string().min(1).max(500).required(),
 	likes: Joi.array().items(likeValidator),
 });
 
@@ -14,7 +14,7 @@ const commentValidator = Joi.object({
 const commentSchema = new mongoose.Schema({
 	creationDate: { type: Date, default: Date.now },
 	author: { type: mongoose.Types.ObjectId, ref: refs.user },
-	text: { type: String, minlength: 5, maxlength: 3000, required: true },
+	text: { type: String, maxlength: 3000, required: true },
 	likes: { type: [likeSchema], default: [] },
 });
 
