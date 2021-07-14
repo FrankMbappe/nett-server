@@ -11,14 +11,17 @@ const { User } = require("../models/User");
 
 //£ Saving file in the server
 
+// const { uploadFile } = require("../libs/s3");
 const { MAX_FILE_SIZE } = require("../config/nett");
 const path = require("path");
 const multer = require("multer");
 const fileStorage = multer.diskStorage({
 	destination: function (req, file, cb) {
 		const base = "uploads";
-		if (/^image.*$/.test(file.mimetype)) return cb(null, base + "/images/");
-		if (/^video.*$/.test(file.mimetype)) return cb(null, base + "/videos/");
+		if (String(file.mimetype).includes("image"))
+			return cb(null, base + "/images/");
+		if (String(file.mimetype).includes("video"))
+			return cb(null, base + "/videos/");
 		cb(null, base + "/documents/");
 	},
 	filename: function (req, file, cb) {
@@ -49,13 +52,17 @@ const formatFile = (file) => {
 
 router.get("/", auth, async (req, res) => {
 	const classrooms = await Classroom.find({}).populate(
-		"teacher posts.author posts.comments.author"
+		"teacher posts.author posts.comments.author" +
+			" quizzes.author quizzes.comments.author" +
+			" tutorials.author tutorials.comments.author"
 	);
 	res.send(classrooms);
 });
 router.get("/:id", auth, async (req, res) => {
 	const classroom = await Classroom.findById(req.params.id).populate(
-		"teacher posts.author posts.comments.author"
+		"teacher posts.author posts.comments.author" +
+			" quizzes.author quizzes.comments.author" +
+			" tutorials.author tutorials.comments.author"
 	);
 	res.send(classroom);
 });
@@ -222,21 +229,34 @@ const postEndpoint = "/:id/posts";
 // Get
 router.get(postEndpoint, async (req, res) => {
 	// Get post list from classroom
-	const { posts } = await Classroom.findById(req.params.id, {
-		posts: 1,
-	}).populate("posts.author posts.comments.author");
-	if (!posts)
+	const { posts, quizzes, tutorials } = await Classroom.findById(
+		req.params.id,
+		{
+			posts: 1,
+			quizzes: 1,
+			tutorials: 1,
+		}
+	).populate(
+		"posts.author posts.comments.author" +
+			" quizzes.author quizzes.comments.author" +
+			" tutorials.author tutorials.comments.author"
+	);
+	if (!(posts || quizzes || tutorials))
 		return res
 			.status(400)
 			.send(`No classroom found with the ID '${req.params.id}'.`);
-
+	console.log(quizzes);
 	// Return OK
-	res.send(posts);
+	res.send([...posts, ...quizzes, ...tutorials]);
 });
 router.get(`${postEndpoint}/:postId`, async (req, res) => {
 	// Get particular post from post list of a classroom
-	const { posts } = await Classroom.findById(req.params.id, { posts: 1 });
-	const post = posts.find(
+	const { posts, quizzes, tutorials } = await Classroom.findById(
+		req.params.id,
+		{ posts: 1, quizzes: 1, tutorials: 1 }
+	);
+	const allPosts = [...posts, ...quizzes, ...tutorials];
+	const post = allPosts.find(
 		(post) => String(post._id) === String(req.params.postId)
 	);
 	const path = `classroom:${req.params.id}/post:${req.params.postId}`;
@@ -258,7 +278,22 @@ router.post(postEndpoint, [auth, upload.single("_file")], async (req, res) => {
 
 	// Checking if the post includes a file
 	let file = null;
-	if (req.file) file = formatFile(req.file);
+	if (req.file) {
+		// Upload file to S3 bucket
+		// const uploadResult = await uploadFile(req.file);
+
+		// TODO: It returns something like below, set file.uri to the 'Location' property
+		// {
+		// 	ETag: '"e822c8031345dd06420cfcac4acde9fe"',
+		// 	Location: 'https://nett-server-b0.s3.us-east-2.amazonaws.com/60e10bea426b882fd4e97531_1626301063882.jpg',
+		// 	key: '60e10bea426b882fd4e97531_1626301063882.jpg',
+		// 	Key: '60e10bea426b882fd4e97531_1626301063882.jpg',
+		// 	Bucket: 'nett-server-b0'
+		// }
+
+		// Format file to save
+		file = formatFile(req.file);
+	}
 
 	// Then validating post input
 	const postToCreate = {
@@ -326,36 +361,25 @@ const quizEndpoint = "/:id/quizzes";
 
 // Create
 router.post(quizEndpoint, auth, async (req, res) => {
-	// Getting classroom by ID
-	const classroom = await Classroom.findById(req.params.id);
-	if (!classroom)
-		return res
-			.status(400)
-			.send(`No classroom found with the given ID '${req.params.id}'.`);
-
-	// Then validating the input
-	const quizToCreate = {
+	// Validating the input
+	const quizToAdd = {
 		author: req.user._id,
 		...req.body,
 	};
-	console.log(req.body);
 
-	const { error } = validateQuiz(quizToCreate);
+	const { error } = validateQuiz(quizToAdd);
 	if (error) {
 		console.log(error);
 		return res.status(400).send(error.details.map(({ message }) => message));
 	}
 
 	// Pushing quiz to classroom post list
-	const quiz = new Quiz(quizToCreate);
-	try {
-		classroom.posts.push(quiz);
-		classroom.save();
-	} catch (ex) {
-		return res
-			.status(500)
-			.send("Something went wrong while executing your request.");
-	}
+	const quiz = new Quiz(quizToAdd);
+	console.log(quiz);
+	await Classroom.findOneAndUpdate(
+		{ _id: req.params.id },
+		{ $push: { quizzes: quiz } }
+	);
 
 	// Return OK
 	res.send(quiz);
@@ -382,7 +406,6 @@ router.post(
 			author: req.user._id,
 			...req.body,
 		};
-		console.log(tutorialToCreate);
 		const { error } = validateTutorial(tutorialToCreate);
 		if (error) {
 			console.log(error);
@@ -391,8 +414,11 @@ router.post(
 
 		// Pushing quiz to classroom post list
 		const tutorial = new Tutorial(tutorialToCreate);
-		classroom.posts.push(tutorial);
-		classroom.save();
+		console.log(tutorial);
+		await Classroom.findOneAndUpdate(
+			{ _id: req.params.id },
+			{ $push: { tutorials: tutorial } }
+		);
 
 		// Return OK
 		res.send(tutorial);

@@ -7,6 +7,8 @@ const {
 } = require("./participation");
 const { postValidator, postSchema } = require("./post");
 const { topicValidator, topicSchema } = require("./topic");
+const { tutorialValidator, tutorialSchema } = require("./tutorial");
+const { quizValidator, quizSchema } = require("./quiz");
 
 // Joi
 const classroomValidator = Joi.object({
@@ -15,6 +17,9 @@ const classroomValidator = Joi.object({
 	teacher: Joi.objectId().required(),
 	participations: Joi.array().items(participationValidator),
 	posts: Joi.array().items(postValidator),
+	posts: Joi.array().items(postValidator),
+	quizzes: Joi.array().items(quizValidator),
+	tutorials: Joi.array().items(tutorialValidator),
 	topics: Joi.array().items(topicValidator),
 });
 
@@ -35,6 +40,8 @@ const classroomSchema = new mongoose.Schema({
 	teacher: { type: mongoose.Types.ObjectId, ref: refs.user },
 	participations: { type: [participationSchema], default: [] },
 	posts: { type: [postSchema], default: [] },
+	quizzes: { type: [quizSchema], default: [] },
+	tutorials: { type: [tutorialSchema], default: [] },
 	topics: { type: [topicSchema], default: [] },
 });
 
