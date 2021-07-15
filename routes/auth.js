@@ -65,7 +65,7 @@ router.get("/confirm", async (req, res) => {
 				return res.send({
 					res: twilioRes,
 					authToken: token,
-					user: newUser,
+					userProfileExists: newUser.profile !== null,
 					isNew: true,
 				});
 			} else {
@@ -76,7 +76,7 @@ router.get("/confirm", async (req, res) => {
 				return res.send({
 					res: twilioRes,
 					authToken: token,
-					user: user,
+					userProfileExists: user.profile !== null,
 					isNew: false,
 				});
 			}

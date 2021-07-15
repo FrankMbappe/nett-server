@@ -6,6 +6,7 @@ const {
 	userTypeValidator,
 	userSchema,
 } = require("./validators/user");
+const { startCase } = require("lodash");
 
 // Input validation
 function validate(user) {
@@ -18,7 +19,20 @@ function validateUserType(userType) {
 // Adds the token generation directly to the User object
 userSchema.methods.generateAuthToken = function () {
 	const token = jwt.sign(
-		{ _id: this._id, _type: this._type, phone: this.phone },
+		{
+			_id: this._id,
+			_type: this._type,
+			phone: this.phone,
+			profile: {
+				firstName: this.firstName,
+				lastName: this.lastName,
+				fullName: startCase(
+					`${this.honorific ?? ""} ${this.firstName} ${this.lastName}`.trim()
+				),
+				picUri: this.picUri,
+				birthDate: this.birthDate,
+			},
+		},
 		config.get("jwtPrivateKey")
 	);
 	return token;
