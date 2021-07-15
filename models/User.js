@@ -24,13 +24,16 @@ userSchema.methods.generateAuthToken = function () {
 			_type: this._type,
 			phone: this.phone,
 			profile: {
-				firstName: this.firstName,
-				lastName: this.lastName,
+				firstName: this.profile.firstName,
+				lastName: this.profile.lastName,
 				fullName: startCase(
-					`${this.honorific ?? ""} ${this.firstName} ${this.lastName}`.trim()
+					`${this.profile.honorific ?? ""} ${this.profile.firstName} ${
+						this.profile.lastName
+					}`.trim()
 				),
-				picUri: this.picUri,
-				birthDate: this.birthDate,
+				picUri: this.profile.picUri,
+				birthDate: this.profile.birthDate,
+				gender: this.profile.gender,
 			},
 		},
 		config.get("jwtPrivateKey")

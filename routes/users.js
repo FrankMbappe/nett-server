@@ -79,10 +79,14 @@ router.post(
 		const { error } = validateProfile(profileToSet);
 		if (error) return res.status(400).send(error.details[0].message);
 
+		// Success
 		user.profile = new UserProfile(profileToSet);
 		user.save();
 
-		res.send(user);
+		// I generate a new token
+		const token = user.generateAuthToken();
+
+		res.send({ user, token });
 	}
 );
 
