@@ -255,3 +255,33 @@
 {"level":"info","message":"Successfully connected to the database..."}
 {"message":"Nett-Server is listening port 3000...","level":"info"}
 {"level":"info","message":"Successfully connected to the database..."}
+{"message":"Nett-Server is listening port 3000...","level":"info"}
+{"level":"info","message":"Successfully connected to the database..."}
+{"message":"Nett-Server is listening port 3000...","level":"info"}
+{"level":"info","message":"Successfully connected to the database..."}
+{"level":"error","message":"Cannot destructure property 'posts' of '(intermediate value)' as it is null. Cannot destructure property 'posts' of '(intermediate value)' as it is null.","stack":"TypeError: Cannot destructure property 'posts' of '(intermediate value)' as it is null.\n    at C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\routes\\posts.js:13:10\n    at processTicksAndRejections (node:internal/process/task_queues:93:5)"}
+{"message":"Nett-Server is listening port 3000...","level":"info"}
+{"level":"info","message":"Successfully connected to the database..."}
+{"level":"error","message":"Converting circular structure to JSON\n    --> starting at object with constructor 'Socket'\n    |     property 'parser' -> object with constructor 'HTTPParser'\n    --- property 'socket' closes the circle Converting circular structure to JSON\n    --> starting at object with constructor 'Socket'\n    |     property 'parser' -> object with constructor 'HTTPParser'\n    --- property 'socket' closes the circle","stack":"TypeError: Converting circular structure to JSON\n    --> starting at object with constructor 'Socket'\n    |     property 'parser' -> object with constructor 'HTTPParser'\n    --- property 'socket' closes the circle\n    at JSON.stringify (<anonymous>)\n    at C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\routes\\posts.js:12:19\n    at newFn (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\express-async-errors\\index.js:16:20)\n    at Layer.handle [as handle_request] (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at next (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\express\\lib\\router\\route.js:137:13)\n    at Route.dispatch (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\express\\lib\\router\\route.js:112:3)\n    at newFn (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\express-async-errors\\index.js:16:20)\n    at Layer.handle [as handle_request] (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\express\\lib\\router\\index.js:281:22\n    at Function.process_params (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\express\\lib\\router\\index.js:335:12)\n    at next (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\express\\lib\\router\\index.js:275:10)\n    at Function.handle (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\express\\lib\\router\\index.js:174:3)\n    at router (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\express\\lib\\router\\index.js:47:12)\n    at newFn (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\express-async-errors\\index.js:16:20)\n    at Layer.handle [as handle_request] (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at trim_prefix (C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\node_modules\\express\\lib\\router\\index.js:317:13)"}
+{"message":"Nett-Server is listening port 3000...","level":"info"}
+{"level":"info","message":"Successfully connected to the database..."}
+{"level":"error","message":"Cannot destructure property 'posts' of '(intermediate value)' as it is null. Cannot destructure property 'posts' of '(intermediate value)' as it is null.","stack":"TypeError: Cannot destructure property 'posts' of '(intermediate value)' as it is null.\n    at C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\routes\\posts.js:14:10\n    at processTicksAndRejections (node:internal/process/task_queues:93:5)"}
+{"message":"Nett-Server is listening port 3000...","level":"info"}
+{"level":"info","message":"Successfully connected to the database..."}
+{"level":"error","message":"Cannot destructure property 'posts' of '(intermediate value)' as it is null. Cannot destructure property 'posts' of '(intermediate value)' as it is null.","stack":"TypeError: Cannot destructure property 'posts' of '(intermediate value)' as it is null.\n    at C:\\Users\\hp\\Documents\\iuc\\2020_2021\\2nd semester\\Project\\nett-server\\routes\\posts.js:14:10\n    at processTicksAndRejections (node:internal/process/task_queues:93:5)"}
+{"message":"Nett-Server is listening port 3000...","level":"info"}
+{"level":"info","message":"Successfully connected to the database..."}
+{"message":"Nett-Server is listening port 3000...","level":"info"}
+{"level":"info","message":"Successfully connected to the database..."}
+{"message":"Nett-Server is listening port 3000...","level":"info"}
+{"level":"info","message":"Successfully connected to the database..."}
+{"message":"Nett-Server is listening port 3000...","level":"info"}
+{"level":"info","message":"Successfully connected to the database..."}
+{"message":"Nett-Server is listening port 3000...","level":"info"}
+{"level":"info","message":"Successfully connected to the database..."}
+{"level":"info","message":"Successfully connected to the database..."}
+{"level":"info","message":"Successfully connected to the database..."}
+{"level":"info","message":"Successfully connected to the database..."}
+{"level":"info","message":"Successfully connected to the database..."}
+{"level":"info","message":"Successfully connected to the database..."}
+{"level":"info","message":"Successfully connected to the database..."}
