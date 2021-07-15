@@ -5,10 +5,9 @@ module.exports = function () {
 		!config.get("jwtPrivateKey") ||
 		!config.get("twilioAccountSid") ||
 		!config.get("twilioAuthToken") ||
-		!config.get("awsAccessKeyId") ||
-		!config.get("awsBucketName") ||
-		!config.get("awsBucketRegion") ||
-		!config.get("awsSecretAccessKey")
+		!config.get("cloudinaryCloudName") ||
+		!config.get("cloudinaryApiKey") ||
+		!config.get("cloudinaryApiSecret")
 	) {
 		throw new Error(
 			"FATAL ERROR: Some of the required the environment variables are not set."

@@ -2,8 +2,7 @@
 	"twilioAccountSid": "TWILIO_ACCOUNT_SID",
 	"twilioAuthToken": "TWILIO_AUTH_TOKEN",
 	"jwtPrivateKey": "nettserver_jwtPrivateKey",
-	"awsAccessKeyId": "AWS_ACCESS_KEY_ID",
-	"awsSecretAccessKey": "AWS_SECRET_ACCESS_KEY",
-	"awsBucketName": "nettserver_awsBucketName",
-	"awsBucketRegion": "nettserver_awsBucketRegion"
+	"cloudinaryCloudName": "nettserver_cloudinaryCloudName",
+	"cloudinaryApiKey": "nettserver_cloudinaryApiKey",
+	"cloudinaryApiSecret": "nettserver_cloudinaryApiSecret"
 }
