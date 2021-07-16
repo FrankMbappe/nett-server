@@ -1,6 +1,5 @@
 const express = require("express"); // Server
 const auth = require("../middleware/auth"); // Protecting the routes
-const debug = require("debug")("ns:routes::users"); // Debugger
 const router = express.Router(); // Instead of creating a new server
 const { User, validate, validateUserType } = require("../models/User"); // Validating input
 const {
@@ -10,34 +9,8 @@ const {
 
 //
 // FILE STORAGE
-const { MAX_FILE_SIZE, userTypes } = require("../config/nett");
-const path = require("path");
-const multer = require("multer");
-const { startsWith } = require("lodash");
-const fileStorage = multer.diskStorage({
-	destination: function (req, file, cb) {
-		return cb(null, "uploads/images/");
-	},
-	filename: function (req, file, cb) {
-		const fileName =
-			"profile_" +
-			req.user._id +
-			"_" +
-			new Date().getTime() +
-			path.extname(file.originalname);
-		cb(null, fileName);
-	},
-});
-const fileFilter = (req, file, cb) => {
-	// If the file uploaded is an image, accept.
-	if (startsWith(file.mimetype, "image")) cb(null, true);
-	else cb(null, false); // Otherwise, reject.
-};
-const upload = multer({
-	storage: fileStorage,
-	limits: { fileSize: MAX_FILE_SIZE },
-	fileFilter: fileFilter,
-});
+const cloudinary = require("../libs/cloudinary");
+const upload = require("../libs/multerCloudinary");
 
 //
 // GETs
@@ -71,11 +44,28 @@ router.post(
 		const user = await User.findById(req.user._id);
 
 		// Checking if the profile includes a picture
-		let picUri = null;
-		if (req.file) picUri = req.file.path;
+		let picUri,
+			picCloudPublicId = null;
+		if (req.file) {
+			// If it does I push it to cloudinary
+			try {
+				const { secure_url, public_id } = await cloudinary.uploader.upload(
+					req.file.path
+				);
+				picUri = secure_url;
+				picCloudPublicId = public_id;
+			} catch (error) {
+				console.log(error);
+				return res
+					.status(500)
+					.send("Something went wrong while uploading your file.");
+			}
+		}
+
+		// I define the shape of the profile
+		const profileToSet = { ...req.body, picUri, picCloudPublicId };
 
 		// If invalid, return 400 - Bad request
-		const profileToSet = { ...req.body, picUri };
 		const { error } = validateProfile(profileToSet);
 		if (error) return res.status(400).send(error.details[0].message);
 

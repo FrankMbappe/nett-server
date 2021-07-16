@@ -12,6 +12,7 @@ const userProfileValidator = Joi.object({
 	email: Joi.string().email(),
 	gender: Joi.string().valid(...Object.values(userGenders)),
 	picUri: Joi.string(),
+	picCloudPublicId: Joi.string(),
 	pocket: userPocketValidator,
 });
 
@@ -43,6 +44,7 @@ const userProfileSchema = new mongoose.Schema({
 		lowercase: true,
 	},
 	picUri: String,
+	picCloudPublicId: String,
 	pocket: {
 		posts: [{ type: mongoose.Types.ObjectId, ref: refs.post }],
 		// TODO: notes,

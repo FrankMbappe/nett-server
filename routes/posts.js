@@ -3,7 +3,12 @@ const router = express.Router({ mergeParams: true });
 const auth = require("../middleware/auth");
 const { Post, validate } = require("../models/Post");
 const { Classroom } = require("../models/Classroom");
-const { upload, formatFile } = require("../libs/multer"); // Saving upcoming files
+const { formatFile } = require("../libs/multer");
+
+//
+// FILE STORAGE
+const upload = require("../libs/multerCloudinary");
+const cloudinary = require("../libs/cloudinary");
 
 // Get
 router.get("/", async (req, res) => {
@@ -57,22 +62,26 @@ router.post("/", [auth, upload.single("_file")], async (req, res) => {
 			.send(`No classroom found with the given ID '${req.params.id}'.`);
 
 	// Checking if the post includes a file
-	let file = null;
+	let file,
+		uri,
+		cloudPublicId = null;
 	if (req.file) {
-		// Upload file to S3 bucket
-		// const uploadResult = await uploadFile(req.file);
+		// If it does I push it to cloudinary
+		try {
+			const { secure_url, public_id } = await cloudinary.uploader.upload(
+				req.file.path
+			);
+			uri = secure_url;
+			cloudPublicId = public_id;
 
-		// TODO: It returns something like below, set file.uri to the 'Location' property
-		// {
-		// 	ETag: '"e822c8031345dd06420cfcac4acde9fe"',
-		// 	Location: 'https://nett-server-b0.s3.us-east-2.amazonaws.com/60e10bea426b882fd4e97531_1626301063882.jpg',
-		// 	key: '60e10bea426b882fd4e97531_1626301063882.jpg',
-		// 	Key: '60e10bea426b882fd4e97531_1626301063882.jpg',
-		// 	Bucket: 'nett-server-b0'
-		// }
-
-		// Format file to save
-		file = formatFile(req.file);
+			// Format file to save
+			file = { ...formatFile(req.file), uri, cloudPublicId };
+		} catch (error) {
+			console.log(error);
+			return res
+				.status(500)
+				.send("Something went wrong while uploading your file.");
+		}
 	}
 
 	// Then validating post input

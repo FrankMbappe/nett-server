@@ -23,18 +23,20 @@ userSchema.methods.generateAuthToken = function () {
 			_id: this._id,
 			_type: this._type,
 			phone: this.phone,
-			profile: {
-				firstName: this.profile.firstName,
-				lastName: this.profile.lastName,
-				fullName: startCase(
-					`${this.profile.honorific ?? ""} ${this.profile.firstName} ${
-						this.profile.lastName
-					}`.trim()
-				),
-				picUri: this.profile.picUri,
-				birthDate: this.profile.birthDate,
-				gender: this.profile.gender,
-			},
+			...(this.profile && {
+				profile: {
+					firstName: this.profile.firstName,
+					lastName: this.profile.lastName,
+					fullName: startCase(
+						`${this.profile.honorific ?? ""} ${this.profile.firstName} ${
+							this.profile.lastName
+						}`.trim()
+					),
+					picUri: this.profile.picUri,
+					birthDate: this.profile.birthDate,
+					gender: this.profile.gender,
+				},
+			}),
 		},
 		config.get("jwtPrivateKey")
 	);

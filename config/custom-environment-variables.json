@@ -1,6 +1,6 @@
 {
-	"twilioAccountSid": "TWILIO_ACCOUNT_SID",
-	"twilioAuthToken": "TWILIO_AUTH_TOKEN",
+	"twilioAccountSid": "TWILIO_ACCOUNT_SID_ALT",
+	"twilioAuthToken": "TWILIO_AUTH_TOKEN_ALT",
 	"jwtPrivateKey": "nettserver_jwtPrivateKey",
 	"cloudinaryCloudName": "nettserver_cloudinaryCloudName",
 	"cloudinaryApiKey": "nettserver_cloudinaryApiKey",

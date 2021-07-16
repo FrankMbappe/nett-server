@@ -65,7 +65,6 @@ router.get("/confirm", async (req, res) => {
 				return res.send({
 					res: twilioRes,
 					authToken: token,
-					userProfileExists: newUser.profile !== null,
 					isNew: true,
 				});
 			} else {
@@ -76,12 +75,14 @@ router.get("/confirm", async (req, res) => {
 				return res.send({
 					res: twilioRes,
 					authToken: token,
-					userProfileExists: user.profile !== null,
 					isNew: false,
 				});
 			}
 		})
-		.catch((err) => res.send(400).send(err));
+		.catch((err) => {
+			console.log(err);
+			res.status(400).send(err);
+		});
 });
 
 // Validation
