@@ -5,6 +5,7 @@ module.exports = function () {
 		!config.get("jwtPrivateKey") ||
 		!config.get("twilioAccountSid") ||
 		!config.get("twilioAuthToken") ||
+		!config.get("twilioServiceId") ||
 		!config.get("cloudinaryCloudName") ||
 		!config.get("cloudinaryApiKey") ||
 		!config.get("cloudinaryApiSecret")

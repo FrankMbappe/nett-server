@@ -74,9 +74,9 @@ router.post(
 		user.save();
 
 		// I generate a new token
-		const token = user.generateAuthToken();
+		const authToken = user.generateAuthToken();
 
-		res.send({ user, token });
+		res.send({ user, authToken });
 	}
 );
 
