@@ -6,6 +6,7 @@ const multer = require("multer");
 const fileStorage = multer.diskStorage({
 	destination: function (req, file, cb) {
 		const base = "uploads";
+		console.log(file);
 		if (String(file.mimetype).includes("image"))
 			return cb(null, base + "/images/");
 		if (String(file.mimetype).includes("video"))
@@ -25,6 +26,11 @@ const fileStorage = multer.diskStorage({
 // Object which will serve as a middleware
 const upload = multer({
 	storage: fileStorage,
+	fileFilter: (req, file, cb) => {
+		if (file.mimetype.includes("image") || file.mimetype.includes("video"))
+			return cb(null, true);
+		return cb(null, false);
+	},
 	limits: { fileSize: MAX_FILE_SIZE },
 });
 

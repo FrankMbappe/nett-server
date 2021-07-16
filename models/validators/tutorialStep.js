@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
-const { fileValidator, fileSchema } = require("./file");
 
 // Joi
 const tutorialStepValidator = Joi.object({
-	position: Joi.number().positive().required(),
+	position: Joi.number().required(),
 	title: Joi.string().min(1).max(255).required(),
 	description: Joi.string().max(255),
-	video: fileValidator,
-	haveWatched: Joi.array().items(Joi.string()),
+	videoUri: Joi.string(),
+	videoCloudPublicId: Joi.string(),
+	haveWatched: Joi.array().items(Joi.objectId()),
 });
 
 // Mongoose
@@ -17,7 +17,8 @@ const tutorialStepSchema = new mongoose.Schema({
 	position: { type: Number, required: true },
 	title: { type: String, minlength: 1, maxlength: 255, required: true },
 	description: { type: String, maxlength: 255 },
-	video: { type: fileSchema, required: true },
+	videoUri: { type: String, required: true },
+	videoCloudPublicId: String,
 	haveWatched: { type: [mongoose.Types.ObjectId], default: [] },
 });
 
