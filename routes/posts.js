@@ -68,8 +68,10 @@ router.post("/", [auth, upload.single("_file")], async (req, res) => {
 	if (req.file) {
 		// If it does I push it to cloudinary
 		try {
+			const fileType = req.file.mimetype.includes("image") ? "image" : "video";
 			const { secure_url, public_id } = await cloudinary.uploader.upload(
-				req.file.path
+				req.file.path,
+				{ resource_type: fileType }
 			);
 			uri = secure_url;
 			cloudPublicId = public_id;
