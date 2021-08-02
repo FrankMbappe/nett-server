@@ -13,6 +13,7 @@ const cloudinary = require("../libs/cloudinary");
 router.post("/", [auth, upload.array("videos", 10)], async (req, res) => {
 	// If no files provided, exit
 	if (!req.files) return res.status(400).send("No video files provided.");
+	console.log(req.body);
 
 	// Check if the tutorial is valid + Steps
 	const tutorialToCreate = {
