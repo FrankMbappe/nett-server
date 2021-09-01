@@ -1,15 +1,15 @@
 const mongoose = require("mongoose"); // Database
 const winston = require("winston");
+const config = require("config");
 
 module.exports = async () => {
-	await mongoose.connect("mongodb://localhost/nettdb", {
-		useNewUrlParser: true,
-		useUnifiedTopology: true,
-		useFindAndModify: false,
-		useCreateIndex: true,
-	});
-	winston.info(
-		"Successfully connected to the database...",
-		new Date().getTime()
-	);
+    const db = config.get("db");
+
+    await mongoose.connect(db, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useFindAndModify: false,
+        useCreateIndex: true,
+    });
+    winston.info(`✔️ Successfully connected to ${db}...`, new Date().getTime());
 };
